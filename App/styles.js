@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
         // backgroundColor: 'orange',
         height: '100%'
     },
-    // appContentView: {
+    // appContentScrollView: {
     //     // backgroundColor: 'yellow',
     //     // flexGrow: 0, // RCTScrollView gets flexGrow: 1 by default
     //     // height: '100%' // dont need this as its flexGrow: 1 due to RCTScrollView

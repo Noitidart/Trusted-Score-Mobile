@@ -28,7 +28,7 @@ class App extends Component<{||}> {
             <Provider store={store}>
                 <View style={styles.app}>
                     <AppBackground />
-                    <ScrollView style={styles.appContentView} contentContainerStyle={styles.appContentContainer} keyboardShouldPersistTaps="handled" scrollEnabled={false}>
+                    <ScrollView style={styles.appContentScrollView} contentContainerStyle={styles.appContentContainer} keyboardShouldPersistTaps="handled" scrollEnabled={false}>
                         <AppContent />
                     </ScrollView>
                 </View>

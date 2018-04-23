@@ -2,8 +2,10 @@
 
 import { Dimensions } from 'react-native'
 import { channel, buffers } from 'redux-saga'
-import { takeEvery, call, put } from 'redux-saga/effects'
+import { takeEvery, put } from 'redux-saga/effects'
 import DeviceInfo from 'react-native-device-info'
+
+import updateTimeFormat from '../../utils/updateTimeFormat'
 
 export type Shape = {||} | {|
     width: number,
@@ -38,7 +40,7 @@ type DimensionsMessage = {
 }
 
 const dimChan = channel(buffers.sliding(1));
-Dimensions.addEventListener('change', ({ nativeEvent }) => dimChan.put({ nativeEvent }) );
+Dimensions.addEventListener('change', nativeEvent => dimChan.put({ nativeEvent }) );
 
 function* dimChanWorker({ nativeEvent }: DimensionsMessage): Generator<void, void, *> {
     console.log('dimChanWorker, nativeEvent:', nativeEvent);
