@@ -3,6 +3,10 @@ package com.trustedscore;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.azendoo.reactnativesnackbar.SnackbarPackage;
+import im.shimo.react.prompt.RNPromptPackage;
+import com.aakashns.reactnativedialogs.ReactNativeDialogsPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -22,7 +26,11 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage()
+          new MainReactPackage(),
+            new SnackbarPackage(),
+            new RNPromptPackage(),
+            new ReactNativeDialogsPackage(),
+            new RNDeviceInfo()
       );
     }
 
