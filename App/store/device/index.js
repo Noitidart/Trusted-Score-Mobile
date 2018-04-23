@@ -48,7 +48,7 @@ function* dimChanWorker({ nativeEvent }: DimensionsMessage): Generator<void, voi
         height,
         widthScreen,
         heightScreen,
-        isPortrait: widthScreen < screenHeight
+        isPortrait: widthScreen < heightScreen
     }))
 }
 function* dimChanWatcher() {

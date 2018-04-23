@@ -95,7 +95,7 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.trustedscore"
@@ -137,8 +137,6 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-snackbar')
-    compile project(':react-native-prompt-android')
     compile project(':react-native-dialogs')
     compile project(':react-native-device-info')
     compile fileTree(dir: "libs", include: ["*.jar"])
