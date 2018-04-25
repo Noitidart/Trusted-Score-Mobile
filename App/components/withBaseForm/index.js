@@ -126,7 +126,11 @@ function withBaseFormFactory(reduxFormConfig: {}) {
                         names.push(element.props.name);
 
                         if (element.props.component === FieldText) {
-                            return React.cloneElement(element, { blurOnSubmit:false, onBaseRef:handleBaseRef, onBaseLayout:handleBaseLayout, onSubmitEditing:handleReturn });
+                            if (element.props.multiline) {
+                                return React.cloneElement(element, { onBaseRef:handleBaseRef, onBaseLayout:handleBaseLayout, onSubmitEditing:handleReturn });
+                            } else {
+                                return React.cloneElement(element, { blurOnSubmit:false, onBaseRef:handleBaseRef, onBaseLayout:handleBaseLayout });
+                            }
                         } else {
                             return React.cloneElement(element, { onBaseLayout:handleBaseLayout });
                         }
