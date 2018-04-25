@@ -3,13 +3,16 @@
 import React, { PureComponent } from 'react'
 import { View } from 'react-native'
 
-import styles from './styles'
-
 type Props = {
-    size?: 1 | 2 | 3 | 4, // default 1
+    size?: number, // default 1
     horizontal?: boolean
 }
 
-const Gap = ({ size=1, horizontal }) => <View style={styles[`size${size}${horizontal ? '_hor' : ''}`]} />
+const BASE_GAP = 8;
+
+const Gap = ({ size=1, horizontal }: Props) => <View style={{
+    width: horizontal ? size * BASE_GAP : undefined,
+    height: !horizontal ? size * BASE_GAP : undefined
+}} />
 
 export default Gap

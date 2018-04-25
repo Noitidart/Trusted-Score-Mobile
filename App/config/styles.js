@@ -8,6 +8,14 @@ const STYLES = StyleSheet.create({
     screen: {
         backgroundColor: COLOR.colorBackground,
         flex: 1
+    },
+
+    form: {
+        padding: 8,
+        width: 296,
+        alignSelf: 'center',
+        backgroundColor: 'skyblue',
+        height: '100%'
     }
 })
 

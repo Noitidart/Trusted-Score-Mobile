@@ -3,8 +3,11 @@
 import { StyleSheet } from 'react-native'
 
 const styles = StyleSheet.create({
-    registerWrap: {
-        marginTop: 64
+    scrollView: {
+
+    },
+    contentView: {
+
     }
 })
 

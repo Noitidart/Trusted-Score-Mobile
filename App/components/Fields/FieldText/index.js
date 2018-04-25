@@ -11,18 +11,19 @@ type Props = {|
     style?: Style,
     disabled?: boolean,
     inputStyle?: Style, // <TextInput style={inputStyle} />
-    onRef: (name: string, el: *) => void,
+    onBaseRef: (name: string, el: *) => void,
+    onBaseLayout: () => void,
     ...FieldProps,
     // ...textInputProps - https://facebook.github.io/react-native/docs/textinput.html#props
 |}
 
 class FieldText extends Component<Props> {
     render() {
-        const { disabled, onRef, inputStyle, style, input:{ value, onChange }, meta:{ error, touched }, ...textInputProps } = this.props;
+        const { disabled, onBaseLayout, onBaseRef, inputStyle, style, input:{ value, onChange }, meta:{ error, touched }, ...textInputProps } = this.props;
 
         return (
-            <View style={style}>
-                <TextInput onBlur={this.handleBlur} onChangeText={onChange} onFocus={this.handleFocus} onBlur={this.handleBlur} ref={onRef && this.handleRef} style={inputStyle} value={value} editable={!disabled} {...textInputProps} />
+            <View style={style} onLayout={this.handleBaseLayout}>
+                <TextInput onBlur={this.handleBlur} onChangeText={onChange} onFocus={this.handleFocus} onBlur={this.handleBlur} ref={onBaseRef && this.handleBaseRef} style={inputStyle} value={value} editable={!disabled} {...textInputProps} />
                 { touched && error && <Text>{error}</Text> }
             </View>
         )
@@ -39,9 +40,13 @@ class FieldText extends Component<Props> {
         if (onBlur) onBlur();
     }
 
-    handleRef = el => {
-        const { onRef, input:{ name } } = this.props;
-        if (onRef) onRef(name, el);
+    handleBaseRef = el => {
+        const { onBaseRef, input:{ name } } = this.props;
+        if (onBaseRef) onBaseRef(name, el);
+    }
+    handleBaseLayout = ({nativeEvent:{layout:{ width, height, x, y }}}: LayoutEvent) => {
+        const { onBaseLayout, input:{ name } } = this.props;
+        if (onBaseLayout) onBaseLayout(name, { width, height, x, y });
     }
 }
 

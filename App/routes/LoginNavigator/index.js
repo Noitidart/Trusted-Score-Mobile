@@ -26,7 +26,8 @@ const LoginNavigator = StackNavigator(
     },
     {
         initialRouteName: CURRENT_ROUTE_NAME,
-        headerMode: 'none'
+        headerMode: 'none',
+        cardStyle: { backgroundColor:'green' }
     }
 )
 
