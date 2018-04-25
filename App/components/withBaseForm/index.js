@@ -36,7 +36,8 @@ function withBaseFormFactory(reduxFormConfig: {}) {
         let scrollView;
         let submit;
 
-        let scrollViewLayout: Layout;
+        let scrollViewHeight: number = 0;
+        let scrollViewWidth: number = 0;
         let scrollViewX: number = 0;
         let scrollViewY: number = 0;
 
@@ -57,7 +58,7 @@ function withBaseFormFactory(reduxFormConfig: {}) {
                 if (inputRefn.hasOwnProperty(name) && inputRefn[name].isFocused()) {
                     if (i === names.length - 1) {
                         // last field was focused blur and submit
-                        inputRefn[name].blur();
+                        // inputRefn[name].blur(); // not needed because i should always put blurFields into redux-form onSubmit
                         submit();
                     } else {
                         // focus next field (it auto blurs currently focused field)
@@ -78,10 +79,6 @@ function withBaseFormFactory(reduxFormConfig: {}) {
                 }
             }
         }
-        function handleBlurSubmit() {
-            blurFields();
-            submit();
-        }
         function focusField(name: string) {
             // scroll to field
             // focus it, if it can be focused
@@ -94,7 +91,6 @@ function withBaseFormFactory(reduxFormConfig: {}) {
             if (!fieldPosn.hasOwnProperty(name)) return;
 
             const { y, height } = fieldPosn[name];
-            const scrollViewHeight = scrollViewLayout.height;
 
             const fieldBottomY = y + height;
             if (scrollViewY < fieldBottomY) {
@@ -103,7 +99,6 @@ function withBaseFormFactory(reduxFormConfig: {}) {
         }
 
         function handleBaseLayout(name: string, layout: Layout) {
-            console.log('handleBaseLayout :: name:', name, 'layout:', layout);
             fieldPosn[name] = layout;
         }
 
@@ -158,13 +153,13 @@ function withBaseFormFactory(reduxFormConfig: {}) {
             }
 
             refScrollView = el => scrollView = el
-            handleLayout = ({nativeEvent:{layout:{ width, height, x, y }}}: LayoutEvent) => {
-                scrollViewLayout = { width, height, x, y };
+            handleLayout = ({nativeEvent:{layout:{ width, height }}}: LayoutEvent) => {
+                scrollViewHeight = height;
+                scrollViewWidth = width;
             }
             handleScroll = ({nativeEvent:{contentOffset:{ x, y }}}: ScrollEvent) => {
                 scrollViewX = x;
                 scrollViewY = y;
-                console.log('scrollViewY:', scrollViewY);
             }
         }
     }
