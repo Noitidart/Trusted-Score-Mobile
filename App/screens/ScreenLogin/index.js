@@ -6,6 +6,7 @@ import { Field } from 'redux-form'
 import Button from 'react-native-buttonex'
 
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
+import { AppNavigatorUtils } from '../../routes/AppNavigator'
 import withBaseForm from '../../components/withBaseForm'
 
 import FieldText from '../../components/Fields/FieldText'
@@ -40,7 +41,7 @@ class ScreenLoginDumb extends Component<Props> {
         return (
             <View style={STYLES.form}>
                 <Gap size={4} />
-                <Field name="email" component={FieldText} placeholder="Email" returnKeyType="next" disableFullscreenUI />
+                <Field name="email" component={FieldText} keyboardType="email-address" placeholder="Email" returnKeyType="next" disableFullscreenUI />
                 <Gap size={2} />
                 <Field name="password" component={FieldText} placeholder="Password" returnKeyType="go" disableFullscreenUI />
                 <Gap size={5} />
@@ -69,6 +70,7 @@ const ScreenLoginFormed = withBaseForm({
     validate,
     onSubmit: function(values, dispatch, { blurFields, focusField }) {
         blurFields();
+        AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
     }
 })
 

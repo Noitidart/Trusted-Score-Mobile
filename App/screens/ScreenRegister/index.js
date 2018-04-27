@@ -6,6 +6,7 @@ import { Field } from 'redux-form'
 import Button from 'react-native-buttonex'
 
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
+import { AppNavigatorUtils } from '../../routes/AppNavigator'
 import withBaseForm from '../../components/withBaseForm'
 
 import FieldText from '../../components/Fields/FieldText'
@@ -44,7 +45,7 @@ class ScreenRegisterDumb extends Component<Props> {
         return (
             <View style={STYLES.form}>
                 <Gap size={4} />
-                <Field name="email" component={FieldText} placeholder="Email" returnKeyType="next" disableFullscreenUI />
+                <Field name="email" component={FieldText} keyboardType="email-address" placeholder="Email" returnKeyType="next" disableFullscreenUI />
                 <Gap size={2} />
                 <Field name="password" component={FieldText} placeholder="Password" returnKeyType="next" disableFullscreenUI />
                 <Gap size={2} />
@@ -60,14 +61,6 @@ class ScreenRegisterDumb extends Component<Props> {
     }
 
     goBack = () => this.props.navigation.goBack()
-    gotoForgot = () => {
-        this.props.blurFields();
-        LoginNavigatorUtils.getNavigation().navigate({ routeName:'forgot', key:'forogt' })
-    }
-    gotoRegister = () => {
-        this.props.blurFields();
-        LoginNavigatorUtils.getNavigation().navigate({ routeName:'register', key:'register' })
-    }
 }
 
 const ScreenRegisterFormed = withBaseForm({
@@ -75,6 +68,7 @@ const ScreenRegisterFormed = withBaseForm({
     validate,
     onSubmit: function(values, dispatch, { blurFields, focusField }) {
         blurFields();
+        AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
     }
 })
 
