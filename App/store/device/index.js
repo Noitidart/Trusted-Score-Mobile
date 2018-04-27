@@ -4,8 +4,7 @@ import { Dimensions } from 'react-native'
 import { channel, buffers } from 'redux-saga'
 import { takeEvery, put } from 'redux-saga/effects'
 import DeviceInfo from 'react-native-device-info'
-
-import updateTimeFormat from '../../utils/updateTimeFormat'
+import updateTimeFormat from 'moment-update-time-format'
 
 export type Shape = {||} | {|
     width: number,
