@@ -12,6 +12,7 @@ const STYLES = StyleSheet.create({
 
     form: {
         padding: 8,
+        paddingBottom: 16,
         width: 296,
         alignSelf: 'center',
         backgroundColor: 'skyblue',
