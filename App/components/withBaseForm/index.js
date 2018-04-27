@@ -87,7 +87,8 @@ function withBaseFormFactory(reduxFormConfig: {}) {
         }
 
         function scrollToField(name: string) {
-            // aligns bottom of field to bottom of scroll view IF fields bottom is below scrollViewLayout.height
+            // aligns bottom of field to bottom of scroll view IF fields bottom is below scrollViewHeight
+            // alignts top of field to top of scroll view IF fields top is above current scrollViewY
             if (!fieldPosn.hasOwnProperty(name)) return;
 
             const { y, height } = fieldPosn[name];
