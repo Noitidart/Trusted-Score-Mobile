@@ -45,7 +45,7 @@ class ScreenLoginDumb extends Component<Props> {
             <View style={STYLES.form}>
                 <Gap size={4} />
                 <Field name="email" component={FieldText} returnKeyType="next" disableFullscreenUI />
-                <Gap size={22} />
+                <Gap size={2} />
                 <Field name="password" component={FieldText} returnKeyType="go" style={{ backgroundColor:'steelblue' }} disableFullscreenUI />
                 <Gap size={5} />
                 <Button title="Login" onPress={submit} />

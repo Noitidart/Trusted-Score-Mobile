@@ -5,7 +5,8 @@ import { StyleSheet } from 'react-native'
 const styles = StyleSheet.create({
     app: {
         // backgroundColor: 'orange',
-        height: '100%'
+        // height: '100%'
+        flex: 1
     },
     // appContentScrollView: {
     //     // backgroundColor: 'yellow',

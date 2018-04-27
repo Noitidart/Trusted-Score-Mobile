@@ -10,6 +10,7 @@
     "cmn": "^1.0.38",
     "lodash": "^4.17.5",
     "moment": "^2.22.1",
+    "prop-types": "^15.6.1",
     "react": "16.3.1",
     "react-native": "0.55.3",
     "react-native-buttonex": "^2.0.4",
