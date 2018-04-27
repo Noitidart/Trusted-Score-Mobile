@@ -16,11 +16,7 @@ import STYLES from '../../config/styles'
 
 import type { FormProps } from 'redux-form'
 
-type OwnProps = {|
-    navigation: {
-        navigate: Navigate
-    }
-|}
+type OwnProps = {||}
 
 type Props = {|
     ...OwnProps,
@@ -44,9 +40,9 @@ class ScreenLoginDumb extends Component<Props> {
         return (
             <View style={STYLES.form}>
                 <Gap size={4} />
-                <Field name="email" component={FieldText} returnKeyType="next" disableFullscreenUI />
+                <Field name="email" component={FieldText} placeholder="Email" returnKeyType="next" disableFullscreenUI />
                 <Gap size={2} />
-                <Field name="password" component={FieldText} returnKeyType="go" style={{ backgroundColor:'steelblue' }} disableFullscreenUI />
+                <Field name="password" component={FieldText} placeholder="Password" returnKeyType="go" disableFullscreenUI />
                 <Gap size={5} />
                 <Button title="Login" onPress={submit} />
                 <Gap size={2} />
@@ -72,8 +68,7 @@ const ScreenLoginFormed = withBaseForm({
     form: 'login',
     validate,
     onSubmit: function(values, dispatch, { blurFields, focusField }) {
-        // blurFields();
-        focusField('email');
+        blurFields();
     }
 })
 

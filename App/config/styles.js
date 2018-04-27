@@ -15,7 +15,6 @@ const STYLES = StyleSheet.create({
         paddingBottom: 16,
         width: 296,
         alignSelf: 'center',
-        backgroundColor: 'skyblue',
         // height: '100%' // i dont want this, i want form sized to content (or fill extra space)
         flexGrow: 1,
         justifyContent: 'center'
