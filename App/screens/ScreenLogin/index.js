@@ -71,8 +71,9 @@ class ScreenLoginDumb extends Component<Props> {
 const ScreenLoginFormed = withBaseForm({
     form: 'login',
     validate,
-    onSubmit: function(values, dispatch, { blurFields }) {
-        blurFields();
+    onSubmit: function(values, dispatch, { blurFields, focusField }) {
+        // blurFields();
+        focusField('email');
     }
 })
 

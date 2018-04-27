@@ -92,8 +92,15 @@ function withBaseFormFactory(reduxFormConfig: {}) {
 
             const { y, height } = fieldPosn[name];
 
+            const fieldTopY = y;
             const fieldBottomY = y + height;
-            if (scrollViewY < fieldBottomY) {
+            console.log('scrollViewHeight:', scrollViewHeight, 'scrollViewY:', scrollViewY, 'fieldBottomY:', fieldBottomY, 'y:', y, 'height:', height)
+            // if (scrollViewY < fieldBottomY) {
+            if (fieldTopY < scrollViewY) {
+                console.log('field top is above. fieldTopY:', fieldTopY, 'scrollViewY:', scrollViewY);
+                scrollView.scrollTo({ y:fieldTopY });
+            } else if (fieldBottomY > scrollViewY + scrollViewHeight) {
+                console.log('fieldBottomY is below:', fieldBottomY, 'scrollViewY + scrollViewHeight:', scrollViewY + scrollViewHeight);
                 scrollView.scrollTo({ y:fieldBottomY-scrollViewHeight });
             }
         }
@@ -157,9 +164,10 @@ function withBaseFormFactory(reduxFormConfig: {}) {
                 scrollViewHeight = height;
                 scrollViewWidth = width;
             }
-            handleScroll = ({nativeEvent:{contentOffset:{ x, y }}}: ScrollEvent) => {
+            handleScroll = ({nativeEvent,nativeEvent:{contentOffset:{ x, y }}}: ScrollEvent) => {
                 scrollViewX = x;
                 scrollViewY = y;
+                console.log('scrollViewY:', scrollViewY);
             }
         }
     }
