@@ -5,6 +5,8 @@ import { View, Text, ScrollView } from 'react-native'
 import { Field } from 'redux-form'
 import Button from 'react-native-buttonex'
 
+import { testIfBlank, testIfSameAs, testIfEmail } from '../../utils/rules'
+
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
 import { AppNavigatorUtils } from '../../routes/AppNavigator'
 import withBaseForm from '../../components/withBaseForm'
@@ -24,10 +26,24 @@ type Props = {|
     ...FormProps
 |}
 
-function validate(values) {
-    const errors = {};
+function validate(valuen) {
+    const errorn = {};
 
-    return errors;
+    const rulesn = {
+        email: [testIfBlank, testIfEmail],
+        password: [testIfBlank]
+    }
+
+    for (const [name, rules] of Object.entries(rulesn)) {
+        const value = valuen[name];
+        for (const rule of rules) {
+            const error = rule(value, valuen);
+            errorn[name] = error;
+            if (error) break;
+        }
+    }
+
+    return errorn;
 }
 
 class ScreenLoginDumb extends Component<Props> {
@@ -41,7 +57,7 @@ class ScreenLoginDumb extends Component<Props> {
         return (
             <View style={STYLES.form}>
                 <Gap size={4} />
-                <Field name="email" component={FieldText} keyboardType="email-address" placeholder="Email" returnKeyType="next" disableFullscreenUI />
+                <Field name="email" component={FieldText} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" placeholder="Email" returnKeyType="next" disableFullscreenUI />
                 <Gap size={2} />
                 <Field name="password" component={FieldText} placeholder="Password" returnKeyType="go" disableFullscreenUI />
                 <Gap size={5} />

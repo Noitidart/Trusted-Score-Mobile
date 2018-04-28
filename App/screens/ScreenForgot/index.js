@@ -5,6 +5,8 @@ import { View, Text, ScrollView } from 'react-native'
 import { Field } from 'redux-form'
 import Button from 'react-native-buttonex'
 
+import { testIfBlank, testIfSameAs, testIfEmail } from '../../utils/rules'
+
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
 import withBaseForm from '../../components/withBaseForm'
 
@@ -27,10 +29,23 @@ type Props = {|
     ...FormProps
 |}
 
-function validate(values) {
-    const errors = {};
+function validate(valuen) {
+    const errorn = {};
 
-    return errors;
+    const rulesn = {
+        email: [testIfBlank, testIfEmail]
+    }
+
+    for (const [name, rules] of Object.entries(rulesn)) {
+        const value = valuen[name];
+        for (const rule of rules) {
+            const error = rule(value, valuen);
+            errorn[name] = error;
+            if (error) break;
+        }
+    }
+
+    return errorn;
 }
 
 class ScreenForgotDumb extends Component<Props> {
@@ -44,7 +59,7 @@ class ScreenForgotDumb extends Component<Props> {
         return (
             <View style={STYLES.form}>
                 <Gap size={4} />
-                <Field name="email" component={FieldText} keyboardType="email-address" placeholder="Email" returnKeyType="go" disableFullscreenUI />
+                <Field name="email" component={FieldText} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" placeholder="Email" returnKeyType="go" disableFullscreenUI />
                 <Gap size={5} />
                 <Button title="Send Password Reset" onPress={submit} />
                 <Gap size={5} />

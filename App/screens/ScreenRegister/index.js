@@ -5,6 +5,8 @@ import { View, Text, ScrollView } from 'react-native'
 import { Field } from 'redux-form'
 import Button from 'react-native-buttonex'
 
+import { testIfBlank, testIfSameAs, testIfEmail } from '../../utils/rules'
+
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
 import { AppNavigatorUtils } from '../../routes/AppNavigator'
 import withBaseForm from '../../components/withBaseForm'
@@ -28,10 +30,26 @@ type Props = {|
     ...FormProps
 |}
 
-function validate(values) {
-    const errors = {};
+function validate(valuen) {
+    const errorn = {};
 
-    return errors;
+    const rulesn = {
+        email: [testIfBlank, testIfEmail],
+        name: [testIfBlank],
+        password: [testIfBlank],
+        password_confirmation: [testIfBlank, testIfSameAs('password')]
+    }
+
+    for (const [name, rules] of Object.entries(rulesn)) {
+        const value = valuen[name];
+        for (const rule of rules) {
+            const error = rule(value, valuen);
+            errorn[name] = error;
+            if (error) break;
+        }
+    }
+
+    return errorn;
 }
 
 class ScreenRegisterDumb extends Component<Props> {
@@ -45,7 +63,9 @@ class ScreenRegisterDumb extends Component<Props> {
         return (
             <View style={STYLES.form}>
                 <Gap size={4} />
-                <Field name="email" component={FieldText} keyboardType="email-address" placeholder="Email" returnKeyType="next" disableFullscreenUI />
+                <Field name="email" component={FieldText} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" placeholder="Email" returnKeyType="next" disableFullscreenUI />
+                <Gap size={2} />
+                <Field name="name" component={FieldText} autoCapitalize="word" autoCorrect={false} placeholder="Name" returnKeyType="next" disableFullscreenUI />
                 <Gap size={2} />
                 <Field name="password" component={FieldText} placeholder="Password" returnKeyType="next" disableFullscreenUI />
                 <Gap size={2} />
