@@ -59,7 +59,7 @@ class ScreenLoginDumb extends Component<Props> {
                 <Gap size={4} />
                 <Field name="email" component={FieldText} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" placeholder="Email" returnKeyType="next" disableFullscreenUI />
                 <Gap size={2} />
-                <Field name="password" component={FieldText} placeholder="Password" returnKeyType="go" disableFullscreenUI />
+                <Field name="password" component={FieldText} autoCapitalize="none" placeholder="Password" returnKeyType="go" disableFullscreenUI secureTextEntry />
                 <Gap size={5} />
                 <Button title="Login" onPress={submit} />
                 <Gap size={2} />

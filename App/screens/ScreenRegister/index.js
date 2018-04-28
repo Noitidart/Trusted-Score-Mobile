@@ -65,11 +65,11 @@ class ScreenRegisterDumb extends Component<Props> {
                 <Gap size={4} />
                 <Field name="email" component={FieldText} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" placeholder="Email" returnKeyType="next" disableFullscreenUI />
                 <Gap size={2} />
-                <Field name="name" component={FieldText} autoCapitalize="word" autoCorrect={false} placeholder="Name" returnKeyType="next" disableFullscreenUI />
+                <Field name="name" component={FieldText} autoCapitalize="words" autoCorrect={false} placeholder="Name" returnKeyType="next" disableFullscreenUI />
                 <Gap size={2} />
-                <Field name="password" component={FieldText} placeholder="Password" returnKeyType="next" disableFullscreenUI />
+                <Field name="password" component={FieldText} autoCapitalize="none" placeholder="Password" returnKeyType="next" disableFullscreenUI secureTextEntry />
                 <Gap size={2} />
-                <Field name="password_cofirmation" component={FieldText} placeholder="Repeat Password" returnKeyType="go" disableFullscreenUI />
+                <Field name="password_confirmation" component={FieldText} autoCapitalize="none" placeholder="Repeat Password" returnKeyType="go" disableFullscreenUI secureTextEntry />
                 <Gap size={5} />
                 <Button title="Sign Up" onPress={submit} />
                 <Gap size={5} />
