@@ -10,7 +10,7 @@ import { fork, all } from 'redux-saga/effects'
 import background, { sagas as backgroundSagas } from './background'
 import counter, { sagas as counterSagas } from './counter'
 import device, { sagas as deviceSagas } from './device'
-import session, { sagas as sessionSagas } from './session'
+import session, { sagas as sessionSagas, transform as sessionTransform } from './session'
 
 import type { Shape as BackgroundShape } from './background'
 import type { Shape as CounterShape } from './counter'
@@ -30,7 +30,8 @@ const persistConfig = {
     key: 'primary',
     debug: process.env.NODE_ENV !== 'production',
     whitelist: ['counter', 'session'],
-    storage
+    storage,
+    transforms: [ sessionTransform ]
 }
 
 const sagaMiddleware = createSagaMiddleware();

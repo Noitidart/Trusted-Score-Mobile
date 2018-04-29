@@ -10,6 +10,7 @@ import { testIfBlank, testIfSameAs, testIfEmail } from '../../utils/rules'
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
 import { AppNavigatorUtils } from '../../routes/AppNavigator'
 import withBaseForm from '../../components/withBaseForm'
+import { login } from '../../store/session'
 
 import FieldText from '../../components/Fields/FieldText'
 import Gap from '../../components/Gap'
@@ -84,8 +85,11 @@ class ScreenLoginDumb extends Component<Props> {
 const ScreenLoginFormed = withBaseForm({
     form: 'login',
     validate,
-    onSubmit: function(values, dispatch, { blurFields, focusField }) {
+    onSubmit: async function(values, dispatch, { blurFields, focusField }) {
         blurFields();
+
+        await dispatch(login(values)).promise
+
         AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
     }
 })

@@ -2,6 +2,7 @@
 
 import { take, select } from 'redux-saga/effects'
 import { REHYDRATE } from 'redux-persist/lib/constants'
+import { SubmissionError } from 'redux-form'
 import { get } from 'lodash'
 
 // optimistc id ends with string "opt"
@@ -42,9 +43,34 @@ export function* waitRehydrate(): Generator<any, any, any> {
 }
 
 //
-export type PromiseAction = { promise:Promise<any>, resolve:any=>void }
+export type PromiseAction = { promise:Promise<any>, resolve:any=>void, reject:null | any=>void }
 export function withPromise<T: Action>(action: T): T {
     // adds action.promise and action.resolve to T
-    action.promise = new Promise(resolve => action.resolve = resolve);
+    action.promise = new Promise((resolve, reject) => {
+        action.resolve = resolve;
+
+        if (!action.hasOwnProperty('reject')) action.reject = reject;
+        else action.reject = null;
+    });
     return action;
+}
+
+//
+export function getSubmissionErrorFromLaravelReply(reply: {
+    message: string,
+    errors: { [fieldName: string]: string[] }[]
+}, status: number) : {} {
+    const error = {};
+
+    if (reply.message || reply.errors) {
+        // take first error, as errors holds value of string array
+        error._error = reply.message;
+        for (const [fieldName, errors] of reply.errors) {
+            error[fieldName] = errors[0]
+        }
+    } else {
+        error._error = `Unhandled response received from server. Status code: ${status}.`
+    }
+
+    return new SubmissionError(error);
 }
