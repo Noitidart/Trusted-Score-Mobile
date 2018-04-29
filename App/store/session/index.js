@@ -5,7 +5,8 @@ import { takeEvery, take, call, put, race } from 'redux-saga/effects'
 import { createTransform } from 'redux-persist'
 import { omit } from 'lodash'
 
-import { getSubmissionErrorFromLaravelReply } from '../utils'
+import { getSubmissionErrorFromLaravelReply, withPromise } from '../utils'
+import fetchApi from '../net/fetchApi'
 
 export type Shape = {|
     status?: SessionStatus, // never persisted
@@ -57,7 +58,7 @@ type VerifyResolve = VerifyResolution => void;
 type VerifyPromise = Promise<VerifyResolution>
 const VERIFY = A`VERIFY`;
 type VerifyAction = {| type:typeof VERIFY, promise:VerifyPromise, resolve:VerifyResolve, reject:null |}
-const verify = (): VerifyAction => promisifyAction({ type:VERIFY, reject:null });
+const verify = (): VerifyAction => withPromise({ type:VERIFY, reject:null });
 
 //
 type RegisterValues = {|
@@ -68,7 +69,7 @@ type RegisterValues = {|
 |}
 const REGISTER = A`REGISTER`;
 type RegisterAction = {| type:typeof REGISTER, values:RegisterValues, promise:FormPromise, resolve:FormResolve, reject:FormReject |}
-const register = (values: RegisterValues): RegisterAction => promisifyAction({ type:REGISTER, values });
+const register = (values: RegisterValues): RegisterAction => withPromise({ type:REGISTER, values });
 
 //
 type LoginValues = {|
@@ -77,7 +78,24 @@ type LoginValues = {|
 |}
 const LOGIN = A`LOGIN`;
 type LoginAction = { type:typeof LOGIN, values:LoginValues, promise:FormPromise, resolve:FormResolve, reject:FormReject }
-const login = (values: LoginValues): LoginAction => promisifyAction({ type:LOGIN, values });
+const login = (values: LoginValues): LoginAction => withPromise({ type:LOGIN, values });
+
+//
+type ForgotValues = {|
+    email: string
+|}
+const FORGOT = A`FORGOT`;
+type ForgotAction = { type:typeof FORGOT, values:ForgotValues, promise:FormPromise, resolve:FormResolve, reject:FormReject }
+const forgot = (values: ForgotValues): ForgotAction => withPromise({ type:FORGOT, values });
+
+//
+type ResetValues = {|
+    password: string,
+    password_confirmation: string
+|}
+const RESET = A`RESET`;
+type ResetAction = { type:typeof RESET, values:ResetValues, promise:FormPromise, resolve:FormResolve, reject:FormReject }
+const reset = (values: ResetValues): ResetAction => withPromise({ type:RESET, values });
 
 //
 function* sessionSaga(): Generator<*, *, *> {
@@ -88,7 +106,9 @@ function* sessionSaga(): Generator<*, *, *> {
             take(VERIFY)
         ]);
 
-        const { resolve, reject, values:body } = loginAction || registerAction || verifyAction;
+        const { type, resolve, reject, values:body } = loginAction || registerAction || verifyAction;
+        console.log('type:', type, 'body:', body);
+
         const { status, reply } = (registerAction && (yield call(fetchApi, 'register' , { method:'POST', body }))) ||
                                   (loginAction    && (yield call(fetchApi, 'login'    , { method:'POST', body }))) ||
                                   (verifyAction   && (yield call(fetchApi, 'user'     , { method:'GET'        })));
@@ -134,4 +154,4 @@ export default function reducer(state: Shape = INITIAL, action:Action): Shape {
 }
 
 export type { SessionStatus }
-export { SS, login, logout, register }
+export { SS, login, logout, register, forgot as forgotPassword, reset as resetPassword }

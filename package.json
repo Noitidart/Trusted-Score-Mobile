@@ -12,6 +12,7 @@
     "moment": "^2.22.1",
     "moment-update-time-format": "github:Noitidart/moment-update-time-format",
     "prop-types": "^15.6.1",
+    "qs": "^6.5.1",
     "react": "16.3.1",
     "react-native": "0.55.3",
     "react-native-buttonex": "^2.0.4",

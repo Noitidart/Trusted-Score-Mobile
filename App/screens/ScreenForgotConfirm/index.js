@@ -2,7 +2,9 @@
 
 import React, { Component } from 'react'
 import { ScrollView, Text, View } from 'react-native'
-import { reduxForm } from 'redux-form'
+import Button from 'react-native-buttonex'
+
+import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
 
 import styles from  './styles'
 import STYLES from '../../config/styles'
@@ -20,7 +22,7 @@ type Props = {|
     ...FormProps
 |}
 
-class ScreenForgotConfirmDumb extends Component<Props> {
+class ScreenForgotConfirm extends Component<Props> {
     static navigationOptions = {
         header: null
     }
@@ -28,23 +30,19 @@ class ScreenForgotConfirmDumb extends Component<Props> {
     render() {
         return (
             <View style={STYLES.form}>
-                <Text>ScreenForgotConfirm</Text>
+                <Text style={styles.message}>
+                    {'\n\n\n'}
+                    You will now receive an email from us with instructions on how you can set a new password.
+                    {'\n\n\n'}
+                </Text>
+                <Button title="Back to Login" onPress={this.gotoLogin} />
+                <Text>{'\n'}</Text>
+                <Button title="Send Again" color={CONFIG.trustedblue} onPress={this.goBack} />
             </View>
         )
     }
+
+    gotoLogin = () => LoginNavigatorUtils.getNavigation().popToTop()
 }
-
-function validate(values) {
-    const errors = {};
-
-    return errors;
-}
-
-const ScreenForgotConfirmFormed = reduxForm({
-    form: 'forgot',
-    validate
-})
-
-const ScreenForgotConfirm = ScreenForgotConfirmFormed(ScreenForgotConfirmDumb)
 
 export default ScreenForgotConfirm

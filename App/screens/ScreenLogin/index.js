@@ -27,33 +27,13 @@ type Props = {|
     ...FormProps
 |}
 
-function validate(valuen) {
-    const errorn = {};
-
-    const rulesn = {
-        email: [testIfBlank, testIfEmail],
-        password: [testIfBlank]
-    }
-
-    for (const [name, rules] of Object.entries(rulesn)) {
-        const value = valuen[name];
-        for (const rule of rules) {
-            const error = rule(value, valuen);
-            errorn[name] = error;
-            if (error) break;
-        }
-    }
-
-    return errorn;
-}
-
 class ScreenLoginDumb extends Component<Props> {
     static navigationOptions = {
         header: null
     }
 
     render() {
-        const { submitting, submit } = this.props;
+        const { submitting, submit, invalid, anyTouched } = this.props;
 
         return (
             <View style={STYLES.form}>
@@ -62,11 +42,11 @@ class ScreenLoginDumb extends Component<Props> {
                 <Gap size={2} />
                 <Field name="password" component={FieldText} autoCapitalize="none" placeholder="Password" returnKeyType="go" disableFullscreenUI secureTextEntry />
                 <Gap size={5} />
-                <Button title="Login" onPress={submit} />
+                <Button title="Login" onPress={submit} disabled={anyTouched && invalid} loading={submitting} />
                 <Gap size={2} />
                 <Button title="I forgot my password" disabled={submitting} onPress={this.gotoForgot} noBackground />
-                <View style={styles.registerWrap}>
-                    <Button title="Not Signed Up? Register Now" onPress={this.gotoRegister} flat />
+                <View style={styles.registerButtonWrap}>
+                    <Button title="Not Signed Up? Register Now" onPress={this.gotoRegister} disabled={submitting} flat />
                 </View>
             </View>
         )
@@ -84,13 +64,17 @@ class ScreenLoginDumb extends Component<Props> {
 
 const ScreenLoginFormed = withBaseForm({
     form: 'login',
-    validate,
     onSubmit: async function(values, dispatch, { blurFields, focusField }) {
         blurFields();
 
         await dispatch(login(values)).promise
 
         AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
+    }
+}, {
+    validateRules: {
+        email: [testIfBlank, testIfEmail],
+        password: [testIfBlank]
     }
 })
 

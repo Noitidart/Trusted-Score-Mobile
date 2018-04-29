@@ -10,11 +10,13 @@ import { fork, all } from 'redux-saga/effects'
 import background, { sagas as backgroundSagas } from './background'
 import counter, { sagas as counterSagas } from './counter'
 import device, { sagas as deviceSagas } from './device'
+import net, { sagas as netSagas } from './net'
 import session, { sagas as sessionSagas, transform as sessionTransform } from './session'
 
 import type { Shape as BackgroundShape } from './background'
 import type { Shape as CounterShape } from './counter'
 import type { Shape as DeviceShape } from './device'
+import type { Shape as NetShape } from './net'
 import type { Shape as SessionShape } from './session'
 
 export type Shape = {
@@ -38,8 +40,8 @@ const sagaMiddleware = createSagaMiddleware();
 let enhancers = applyMiddleware(sagaMiddleware);
 if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) enhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(enhancers);
 
-const reducers = persistReducer(persistConfig, combineReducers({ background, counter, device, form, session }));
-const sagas = [ ...backgroundSagas, ...counterSagas, ...deviceSagas, ...sessionSagas ];
+const reducers = persistReducer(persistConfig, combineReducers({ background, counter, device, form, net, session }));
+const sagas = [ ...backgroundSagas, ...counterSagas, ...deviceSagas, ...sessionSagas, ...netSagas ];
 
 const store = createStore(reducers, enhancers);
 

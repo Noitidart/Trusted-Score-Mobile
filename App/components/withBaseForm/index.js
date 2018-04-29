@@ -29,7 +29,13 @@ type Layout = {
     y: number
 }
 
-function withBaseFormFactory(reduxFormConfig: {}) {
+type ExtraConfig = {|
+    validateRules?: {
+        [fieldName: string]: Array<()=>string|void> // if you supply a reduxFormConfig.validate - errors from validateRules take precedence. so if field "password" failed validateRules, and reduxFormConfig.validate, the message from validateRules will be shown link43089 // as this takes an array of rules, the first rule that gives error message is taken and rest of rules arent checked
+    }
+|}
+
+function withBaseFormFactory(reduxFormConfig: {} = {}, { validateRules }: ExtraConfig = {}) {
     return function withBaseForm(WrappedComponent: ComponentType<any>) {
         let names = [];
 
@@ -110,6 +116,34 @@ function withBaseFormFactory(reduxFormConfig: {}) {
             fieldPosn[name] = layout;
         }
 
+        const reduxFormConfigFinal = { ...reduxFormConfig };
+
+        if (validateRules) {
+            console.log('yes has validateRules');
+            function validate(valuen, dispatch, props) {
+                const errorn = {};
+
+                const rulesn = validateRules;
+
+                for (const [name, rules] of Object.entries(rulesn)) {
+                    const value = valuen[name];
+                    for (const rule of rules) {
+                        const error = rule(value, valuen);
+                        errorn[name] = error;
+                        if (error) break;
+                    }
+                }
+
+                if (reduxFormConfigFinal.hasOwnProperty(validate)) {
+                    const extraErrorn = reduxFormConfigFinal.validate(valuen, dispatch, props);
+                    if (extraErrorn) Object.assign(errorn, Object.assign(extraErrorn, errorn)); // link43089
+                }
+
+                return errorn;
+            }
+
+            reduxFormConfigFinal.validate = validate;
+        }
 
         // return inheritance inversion one
         class WithBaseFormInverted extends WrappedComponent {
@@ -146,7 +180,7 @@ function withBaseFormFactory(reduxFormConfig: {}) {
         }
 
         //
-        const Formed = reduxForm(reduxFormConfig)(WithBaseFormInverted);
+        const Formed = reduxForm(reduxFormConfigFinal)(WithBaseFormInverted);
 
         // return props proxy
         return class WithBaseForm extends Component {

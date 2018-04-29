@@ -10,6 +10,7 @@ import { testIfBlank, testIfSameAs, testIfEmail } from '../../utils/rules'
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
 import { AppNavigatorUtils } from '../../routes/AppNavigator'
 import withBaseForm from '../../components/withBaseForm'
+import { register } from '../../store/session'
 
 import FieldText from '../../components/Fields/FieldText'
 import Gap from '../../components/Gap'
@@ -30,35 +31,13 @@ type Props = {|
     ...FormProps
 |}
 
-function validate(valuen) {
-    const errorn = {};
-
-    const rulesn = {
-        email: [testIfBlank, testIfEmail],
-        name: [testIfBlank],
-        password: [testIfBlank],
-        password_confirmation: [testIfBlank, testIfSameAs('password')]
-    }
-
-    for (const [name, rules] of Object.entries(rulesn)) {
-        const value = valuen[name];
-        for (const rule of rules) {
-            const error = rule(value, valuen);
-            errorn[name] = error;
-            if (error) break;
-        }
-    }
-
-    return errorn;
-}
-
 class ScreenRegisterDumb extends Component<Props> {
     static navigationOptions = {
         header: null
     }
 
     render() {
-        const { submitting, submit } = this.props;
+        const { submitting, submit, anyTouched, invalid } = this.props;
 
         return (
             <View style={STYLES.form}>
@@ -71,9 +50,9 @@ class ScreenRegisterDumb extends Component<Props> {
                 <Gap size={2} />
                 <Field name="password_confirmation" component={FieldText} autoCapitalize="none" placeholder="Repeat Password" returnKeyType="go" disableFullscreenUI secureTextEntry />
                 <Gap size={5} />
-                <Button title="Sign Up" onPress={submit} />
+                <Button title="Sign Up" onPress={submit} disabled={anyTouched && invalid} loading={submitting} />
                 <Gap size={5} />
-                <View style={styles.bottomButtonWrap}>
+                <View style={STYLES.formBottomButtonWrap}>
                     <Button title="Back" onPress={this.goBack} noBackground />
                 </View>
             </View>
@@ -85,10 +64,19 @@ class ScreenRegisterDumb extends Component<Props> {
 
 const ScreenRegisterFormed = withBaseForm({
     form: 'register',
-    validate,
-    onSubmit: function(values, dispatch, { blurFields, focusField }) {
+    onSubmit: async function(values, dispatch, { blurFields, focusField }) {
         blurFields();
+
+        await dispatch(register(values)).promise;
+
         AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
+    }
+}, {
+    validateRules: {
+        email: [testIfBlank, testIfEmail],
+        name: [testIfBlank],
+        password: [testIfBlank],
+        password_confirmation: [testIfBlank, testIfSameAs('password')]
     }
 })
 

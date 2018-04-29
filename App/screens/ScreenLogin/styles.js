@@ -3,7 +3,7 @@
 import { StyleSheet } from 'react-native'
 
 const styles = StyleSheet.create({
-    registerWrap: {
+    registerButtonWrap: {
         // width: '100%',
         alignItems: 'center',
         marginTop: 64,

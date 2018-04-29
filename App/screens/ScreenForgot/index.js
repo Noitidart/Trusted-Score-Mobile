@@ -9,6 +9,7 @@ import { testIfBlank, testIfSameAs, testIfEmail } from '../../utils/rules'
 
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
 import withBaseForm from '../../components/withBaseForm'
+import { forgotPassword } from '../../store/session'
 
 import FieldText from '../../components/Fields/FieldText'
 import Gap from '../../components/Gap'
@@ -29,41 +30,22 @@ type Props = {|
     ...FormProps
 |}
 
-function validate(valuen) {
-    const errorn = {};
-
-    const rulesn = {
-        email: [testIfBlank, testIfEmail]
-    }
-
-    for (const [name, rules] of Object.entries(rulesn)) {
-        const value = valuen[name];
-        for (const rule of rules) {
-            const error = rule(value, valuen);
-            errorn[name] = error;
-            if (error) break;
-        }
-    }
-
-    return errorn;
-}
-
 class ScreenForgotDumb extends Component<Props> {
     static navigationOptions = {
         header: null
     }
 
     render() {
-        const { submitting, submit } = this.props;
+        const { submitting, submit, anyTouched, invalid } = this.props;
 
         return (
             <View style={STYLES.form}>
                 <Gap size={4} />
                 <Field name="email" component={FieldText} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" placeholder="Email" returnKeyType="go" disableFullscreenUI />
                 <Gap size={5} />
-                <Button title="Send Password Reset" onPress={submit} />
+                <Button title="Send Password Reset" onPress={submit} disabled={anyTouched && invalid} loading={submitting} />
                 <Gap size={5} />
-                <View style={styles.bottomButtonWrap}>
+                <View style={STYLES.formBottomButtonWrap}>
                     <Button title="Back" onPress={this.goBack} noBackground />
                 </View>
             </View>
@@ -75,9 +57,16 @@ class ScreenForgotDumb extends Component<Props> {
 
 const ScreenForgotFormed = withBaseForm({
     form: 'forgot',
-    validate,
-    onSubmit: function(values, dispatch, { blurFields, focusField }) {
+    onSubmit: async function(values, dispatch, { blurFields, focusField }) {
         blurFields();
+
+        await dispatch(forgotPassword(values)).promise;
+
+        LoginNavigatorUtils.getNavigation().navigate({ routeName:'forgot_confirm', key:'forgot_confirm' })
+    }
+}, {
+    validateRules: {
+        email: [testIfBlank, testIfEmail]
     }
 })
 

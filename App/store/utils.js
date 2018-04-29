@@ -65,7 +65,7 @@ export function getSubmissionErrorFromLaravelReply(reply: {
     if (reply.message || reply.errors) {
         // take first error, as errors holds value of string array
         error._error = reply.message;
-        for (const [fieldName, errors] of reply.errors) {
+        for (const [fieldName, errors] of Object.entries(reply.errors)) {
             error[fieldName] = errors[0]
         }
     } else {
