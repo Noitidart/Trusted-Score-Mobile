@@ -98,6 +98,14 @@ type ResetAction = { type:typeof RESET, values:ResetValues, promise:FormPromise,
 const reset = (values: ResetValues): ResetAction => withPromise({ type:RESET, values });
 
 //
+type CheckCodeValues = {|
+    code: string
+|}
+const CHECK_CODE = A`CHECK_CODE`;
+type CheckCodeAction = { type:typeof CHECK_CODE, values:CheckCodeValues, promise:FormPromise, resolve:FormResolve, reject:FormReject }
+const checkCode = (values: CheckCodeValues): CheckCodeAction => withPromise({ type:CHECK_CODE, values });
+
+//
 function* sessionSaga(): Generator<*, *, *> {
     while (true) {
         const [ loginAction, registerAction, verifyAction ] = yield race([
@@ -154,4 +162,4 @@ export default function reducer(state: Shape = INITIAL, action:Action): Shape {
 }
 
 export type { SessionStatus }
-export { SS, login, logout, register, forgot as forgotPassword, reset as resetPassword }
+export { SS, login, logout, register, forgot as forgotPassword, reset as resetPassword, checkCode }

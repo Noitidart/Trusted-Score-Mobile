@@ -60,7 +60,7 @@ const ScreenForgotFormed = withBaseForm({
     onSubmit: async function(values, dispatch, { blurFields, focusField }) {
         blurFields();
 
-        await dispatch(forgotPassword(values)).promise;
+        // await dispatch(forgotPassword(values)).promise;
 
         LoginNavigatorUtils.getNavigation().navigate({ routeName:'forgot_confirm', key:'forgot_confirm' })
     }

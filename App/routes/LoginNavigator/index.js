@@ -22,7 +22,8 @@ const LoginNavigator = StackNavigator(
         login   : { screen:ScreenLogin    },
         register: { screen:ScreenRegister },
         forgot: { screen:ScreenForgot },
-        forgot_confirm: { screen:ScreenForgotConfirm }
+        forgot_confirm: { screen:ScreenForgotConfirm },
+        reset: { screen:ScreenForgotReset }
     },
     {
         initialRouteName: CURRENT_ROUTE_NAME,

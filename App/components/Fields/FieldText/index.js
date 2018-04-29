@@ -24,7 +24,7 @@ class FieldText extends Component<Props> {
         return (
             <View style={style} onLayout={this.handleBaseLayout}>
                 <TextInput onBlur={this.handleBlur} onChangeText={onChange} onFocus={this.handleFocus} onBlur={this.handleBlur} ref={onBaseRef && this.handleBaseRef} style={inputStyle} value={value} editable={!disabled} {...textInputProps} />
-                { touched && error && <Text>{error}</Text> }
+                { touched && error && <Text style={styles.error}>{error}</Text> }
             </View>
         )
     }

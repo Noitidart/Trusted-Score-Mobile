@@ -7,7 +7,7 @@ export function deepMapReact(tree: Element<any>, fn: (el: Element<any>, depth: n
 
     function mapEl(el) {
         const newEl = fn(el, context.depth, context.root);
-        if(React.Children.count(newEl.props.children)) {
+        if (React.isValidElement(newEl) && React.Children.count(newEl.props.children)) {
             return React.cloneElement(
                 newEl,
                 undefined,

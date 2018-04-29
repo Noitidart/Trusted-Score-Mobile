@@ -33,7 +33,7 @@ class ScreenLoginDumb extends Component<Props> {
     }
 
     render() {
-        const { submitting, submit, invalid, anyTouched } = this.props;
+        const { invalid, submit, submitFailed, submitting } = this.props;
 
         return (
             <View style={STYLES.form}>
@@ -42,9 +42,9 @@ class ScreenLoginDumb extends Component<Props> {
                 <Gap size={2} />
                 <Field name="password" component={FieldText} autoCapitalize="none" placeholder="Password" returnKeyType="go" disableFullscreenUI secureTextEntry />
                 <Gap size={5} />
-                <Button title="Login" onPress={submit} disabled={anyTouched && invalid} loading={submitting} />
+                <Button title="Login" onPress={submit} disabled={submitFailed && invalid} loading={submitting} />
                 <Gap size={2} />
-                <Button title="I forgot my password" disabled={submitting} onPress={this.gotoForgot} noBackground />
+                <Button title="I forgot my password" onPress={this.gotoForgot} disabled={submitting} noBackground />
                 <View style={styles.registerButtonWrap}>
                     <Button title="Not Signed Up? Register Now" onPress={this.gotoRegister} disabled={submitting} flat />
                 </View>
@@ -52,24 +52,20 @@ class ScreenLoginDumb extends Component<Props> {
         )
     }
 
-    gotoForgot = () => {
-        this.props.blurFields();
-        LoginNavigatorUtils.getNavigation().navigate({ routeName:'forgot', key:'forogt' })
-    }
-    gotoRegister = () => {
-        this.props.blurFields();
-        LoginNavigatorUtils.getNavigation().navigate({ routeName:'register', key:'register' })
-    }
+    gotoForgot = () => LoginNavigatorUtils.getNavigation().navigate({ routeName:'forgot', key:'forgot' })
+    gotoRegister = () => LoginNavigatorUtils.getNavigation().navigate({ routeName:'register', key:'register' })
 }
 
 const ScreenLoginFormed = withBaseForm({
     form: 'login',
-    onSubmit: async function(values, dispatch, { blurFields, focusField }) {
+    onSubmit: async function(values, dispatch, { blurFields, focusField, reset }) {
         blurFields();
 
         await dispatch(login(values)).promise
 
         AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
+
+        setTimeout(reset, 1000);
     }
 }, {
     validateRules: {
