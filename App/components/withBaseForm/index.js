@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import { ScrollView } from 'react-native'
 import { reduxForm, Field } from 'redux-form'
 import wrapDisplayName from 'recompose/wrapDisplayName'
+import { set, get } from 'lodash'
 
 import { deepMapReact } from '../../utils/react'
 
@@ -119,17 +120,16 @@ function withBaseFormFactory(reduxFormConfig: {} = {}, { validateRules }: ExtraC
         const reduxFormConfigFinal = { ...reduxFormConfig };
 
         if (validateRules) {
-            console.log('yes has validateRules');
             function validate(valuen, dispatch, props) {
                 const errorn = {};
 
                 const rulesn = validateRules;
 
                 for (const [name, rules] of Object.entries(rulesn)) {
-                    const value = valuen[name];
+                    const value = get(valuen, name);
                     for (const rule of rules) {
                         const error = rule(value, valuen);
-                        errorn[name] = error;
+                        set(errorn, name, error);
                         if (error) break;
                     }
                 }
