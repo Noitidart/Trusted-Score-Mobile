@@ -13,9 +13,11 @@ import { hashStringToColor } from '../../../utils/hash'
 import { getInitials } from '../../../utils/forum'
 import { formatFixedWithoutZeroes, formatBlankAsUndefined } from '../../../utils/form'
 
+import Avatar from '../../../components/Avatar'
 import Icon from '../../../components/Icon'
 import FieldText from '../../../components/Fields/FieldText'
 import FieldSlider from '../../../components/Fields/FieldSlider'
+import Score from './Score'
 
 import styles from  './styles'
 import STYLES from '../../../config/styles'
@@ -45,36 +47,28 @@ type Props = {|
 const FORM = 'my-week';
 
 class WeekFormDumb extends Component<Props> {
+    scoreEl: null | Element<typeof Score> = null
+
     render() {
         const { nameValue, scoreValue } = this.props;
-
-        const name = nameValue;
-        const initials = getInitials(name || '');
-        const nameColor = hashStringToColor(name || '');
-        const initialsColor = tinycolor.readability(COLOR.white, nameColor) >= 2 ? COLOR.white : COLOR.black;
 
         return (
             <View style={styles.weekForm}>
                 <View style={styles.topRow}>
-                    <View style={[styles.avatar, !!initials && { backgroundColor:nameColor }]}>
-                        <Text style={[initials.length <= 2 ? styles.avatarInitials : styles.avatarInitialsThree, { color:initialsColor } ]}>
-                            { initials || '—' }
-                        </Text>
-                    </View>
+                    <Avatar name={nameValue} size={64} fontSize={34} fontSizeOver={24} />
                     <View style={styles.midCol}>
                         <Field name="name" component={FieldText} style={styles.name} autoCapitalize="words" autoCorrect={false} placeholder="Your Name" placeholderColor={COLOR.textColorSecondary} inputStyle={styles.nameInput} underlineColorAndroid="transparent" />
-                        <Field name="score" component={FieldSlider} style={styles.slider} icon="star" iconSet="Material" maximumValue={10} minimumValue={0} step={0.1} parse={formatFixedWithoutZeroes} format={formatBlankAsUndefined} />
+                        <Field name="score" component={FieldSlider} style={styles.slider} format={formatBlankAsUndefined} icon="star" iconSet="Material" maximumValue={10} minimumValue={0} onDrag={this.handleScoreDrag} parse={formatFixedWithoutZeroes} step={0.1} />
                     </View>
-                    <View style={styles.score}>
-                        <Text style={styles.scoreText}>
-                            { scoreValue === undefined ? '?' : scoreValue }
-                        </Text>
-                    </View>
+                    <Score ref={this.refScore} defaultValue={scoreValue} />
                 </View>
                 <Field name="message" component={FieldText} style={styles.message} inputStyle={styles.messageInput} placeholder="Message (optional)" placeholderColor={COLOR.textColorSecondary} underlineColorAndroid="transparent" />
             </View>
         )
     }
+
+    refScore = (el: null | Element<typeof Score>) => this.scoreEl = el
+    handleScoreDrag = (value: number) => this.scoreEl && this.scoreEl.updateScore(formatFixedWithoutZeroes(value))
 }
 
 const WeekFormFormed = reduxForm({
@@ -90,7 +84,7 @@ const WeekFormConnected = connect(
 
         const nameValue = formValueSelector(FORM)(state, 'name');
         const scoreValue = formValueSelector(FORM)(state, 'score');
-        console.log('scoreValue:', scoreValue, 'score:', score);
+
         return {
             initialValues: {
                 name,

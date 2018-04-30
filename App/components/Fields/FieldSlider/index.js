@@ -14,6 +14,7 @@ type Props = {|
     style?: Style,
     placeholder?: string,
     controlStyle?: Style, // <Style style={controlStyle} />
+    onDrag?: (dragValue: number) => void,
     onBaseRef: (name: string, el: *) => void,
     onBaseLayout: () => void,
     ...FieldProps,
@@ -29,10 +30,22 @@ class FieldSlider extends Component<Props, State> {
         dragValue: undefined
     }
 
+    componentDidUpdate(propsPrev: Props, statePrev: State) {
+        const {input:{ value }, onDrag } = this.props;
+        const { dragValue } = this.state;
+        const { dragValue:dragValuePrev } = statePrev;
+
+        if (!this.isFocused && dragValue === value) {
+            this.setState(() => ({ dragValue:undefined }));
+        }
+
+        if (onDrag && dragValue !== dragValuePrev) {
+            onDrag(dragValue)
+        }
+    }
+
     render() {
         const { onBaseLayout, onBaseRef, controlStyle, style, input:{ value, onChange }, meta:{ error, touched }, icon, iconSet, placeholder, ...sliderProps } = this.props;
-
-        console.log('value incoming:', value);
 
         return (
             <View style={[styles.field, style]} onLayout={this.handleBaseLayout}>
@@ -48,25 +61,36 @@ class FieldSlider extends Component<Props, State> {
         )
     }
 
+    isFocused: boolean = false
+    updateDragValue(dragValue: number) {
+        this.setState(() => {
+            const {meta:{ parse }} = this.props; // i dont get access to parse function, have to ask how
+            // if (!parse) console.log('no parse, this.props:', this.props);
+            const dragValueParsed = parse ? parse(dragValue) : dragValue;
+            return { dragValue:dragValueParsed };
+        });
+    }
     handleValueChange = (dragValue: number) => {
-        this.setState(() => ({ dragValue }));
-        this.handleFocus();
+        this.updateDragValue(dragValue);
+        if (!this.isFocused) this.handleFocus();
     }
     handleSlidingComplete = (dragValue: number) => {
         const {input:{ onChange }} = this.props;
-        this.setState(() => ({ dragValue }))
+        this.updateDragValue(dragValue);
         onChange(dragValue);
         this.handleBlur();
     }
 
     handleFocus = () => {
         const { /* onFocus, */ input } = this.props;
+        this.isFocused = true;
         input.onFocus();
         // if (onFocus) onFocus(); // i do not support onFocus as <Slider> doesnt have it, but i can with this custom implementation
     }
     handleBlur = () => {
         const { /* onBlur, */ input } = this.props;
         input.onBlur();
+        this.isFocused = false;
         // if (onBlur) onBlur(); // i do not support onBlur as <Slider> doesnt have it, but i can with this custom implementation
     }
 

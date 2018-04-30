@@ -15,6 +15,7 @@ import MaterialDivider from '../../../components/Material/MaterialDivider'
 import styles from './styles'
 
 import type { PopupMenuItem, PopupAnchor } from 'react-native-popup-menu-android'
+import Avatar from '../../../components/Avatar'
 
 
 type Props = {|
@@ -35,19 +36,11 @@ class ScoreItem extends Component<Props> {
     render() {
         const { name, score, updatedAt, message } = this.props;
 
-        let initials = getInitials(name);
-        const nameColor = hashStringToColor(name);
-        const initialsColor = tinycolor.readability(COLOR.white, nameColor) >= 2 ? COLOR.white : COLOR.black;
-
         return (
             <TouchableNativeFeedback onPress={this.handleItemPress} >
                 <View style={styles.scoreItem}>
                     <View style={styles.primaryPosition}>
-                        <View style={[styles.primaryIcon, { backgroundColor:nameColor }]}>
-                            <Text style={{ fontSize:(initials.length > 2 ? 15 : 20), color:initialsColor }}>
-                                { initials }
-                            </Text>
-                        </View>
+                        <Avatar name={name} size={40} fontSize={20} fontSizeOver={15} />
                     </View>
                     <View style={styles.lines}>
                         <View style={styles.titleRow}>

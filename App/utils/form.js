@@ -11,10 +11,7 @@ export function formatFixedWithoutZeroes(value?: number) {
     } else {
         const fixed = parseFloat(value.toFixed(1));
         const floored = Math.floor(fixed);
-        if (fixed - floored < Number.EPSILON) {
-            return floored;
-        } else {
-            return fixed;
-        }
+        if (fixed - floored < Number.EPSILON) return floored;
+        else return fixed;
     }
 }
