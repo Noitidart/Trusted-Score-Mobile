@@ -9,7 +9,9 @@ const styles = StyleSheet.create({
         padding: 16,
         paddingBottom: 0,
         borderBottomWidth: 1, // from MaterialDivider
-        borderBottomColor: 'rgba(0, 0, 0, 0.12)' // from MaterialDivider
+        borderBottomColor: 'rgba(0, 0, 0, 0.12)', // from MaterialDivider
+        height: 130, // tested onLayout before applying this
+        backgroundColor: COLOR.white
     },
     topRow: {
         flexDirection: 'row',

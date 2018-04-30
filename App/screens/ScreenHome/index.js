@@ -43,7 +43,7 @@ class ScreenHome extends Component<Props> {
         return (
             // <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
                 <View style={STYLES.screen}>
-                    <View style={styles.myWeekForm}>
+                    <View style={styles.myWeekForm} onLayout={e => console.log(e.nativeEvent)}>
                         <View style={styles.topRow}>
                             <View style={[styles.avatar, { backgroundColor:nameColor }]}>
                                 <Text style={[styles.avatarInitials, { color:initialsColor } ]}>
@@ -61,7 +61,7 @@ class ScreenHome extends Component<Props> {
                             </View>
                             <View style={styles.score}>
                                 <Text style={styles.scoreText}>
-                                    9.6
+                                    ?
                                 </Text>
                             </View>
                         </View>
