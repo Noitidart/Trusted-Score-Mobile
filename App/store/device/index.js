@@ -66,7 +66,7 @@ type Action = PatchAction;
 
 export default function reducer(state: Shape = INITIAL, action:Action): Shape {
     switch(action.type) {
-        case PATCH: return { state, ...state.data };
+        case PATCH: return { ...state, ...action.data };
         default: return state;
     }
 }

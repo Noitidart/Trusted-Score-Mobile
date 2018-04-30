@@ -4,8 +4,9 @@ import React, { Component } from 'react'
 import { View, Text, ScrollView } from 'react-native'
 import { Field } from 'redux-form'
 import Button from 'react-native-buttonex'
+import { connect } from 'react-redux'
 
-import { testIfBlank, testIfSameAs, testIfEmail } from '../../utils/rules'
+import { testIfBlank, testIfEmail } from '../../utils/rules'
 
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
 import withBaseForm from '../../components/withBaseForm'
@@ -21,12 +22,20 @@ import type { FormProps } from 'redux-form'
 
 type OwnProps = {|
     navigation: {|
-        goBack: () => void
+        goBack: GoBack
+    |}
+|}
+
+type ConnectedProps = {|
+    ...OwnProps,
+    //
+    initialValues: {|
+        email: string | void
     |}
 |}
 
 type Props = {|
-    ...OwnProps,
+    ...ConnectedProps,
     ...FormProps
 |}
 
@@ -70,6 +79,16 @@ const ScreenForgotFormed = withBaseForm({
     }
 })
 
-const ScreenForgot = ScreenForgotFormed(ScreenForgotDumb)
+const ScreenForgotConnected = connect(
+    function({ session:{ email } }: AppShape) {
+        return {
+            initialValues: {
+                email
+            }
+        }
+    }
+)
+
+const ScreenForgot = ScreenForgotConnected(ScreenForgotFormed(ScreenForgotDumb))
 
 export default ScreenForgot

@@ -1,7 +1,7 @@
 // @flow
 
 import { NetInfo } from 'react-native'
-import { call, put } from 'redux-saga/effects'
+import { call, put, select } from 'redux-saga/effects'
 import qs from 'qs'
 import { get } from 'lodash'
 
@@ -107,7 +107,10 @@ function* fetchApi(input: string, init: FetchIn = {}): Generator<*, FetchOut, *>
 
     ////// end - preprocess
 
-    if (!input.startsWith('http')) input = `https://${fetchApi.DOMAIN}/${input}`;
+    if (!input.startsWith('http')) {
+        input = `https://${fetchApi.DOMAIN}/${input}`;
+        init.headers.Authorization = 'Bearer ' + (yield select()).session.token;
+    }
 
     //// end
 

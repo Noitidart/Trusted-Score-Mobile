@@ -1,19 +1,20 @@
 // @flow
 
 import { delay } from 'redux-saga'
-import { takeEvery, take, call, put, race } from 'redux-saga/effects'
+import { call, fork, put, race, select, take, takeEvery } from 'redux-saga/effects'
 import { createTransform } from 'redux-persist'
 import { omit } from 'lodash'
 
-import { getSubmissionErrorFromLaravelReply, withPromise } from '../utils'
+import { getSubmissionErrorFromLaravelReply, withPromise, waitRehydrate } from '../utils'
 import fetchApi from '../net/fetchApi'
+import { AppNavigatorUtils } from '../../routes/AppNavigator'
 
 export type Shape = {|
     status?: SessionStatus, // never persisted
     email: string,
     id: AccountId,
     token?: string
-|};
+|} | {||};
 
 const INITIAL = {};
 export const sagas = [];
@@ -33,7 +34,7 @@ type FormReject = SubmissionErrorType => void;
 type FormPromise = Promise<FormResolution>;
 
 const SS = {
-    STARTUP: 'STARTUP', // reading redux-perist file, maybe wait for devic things?
+    // undefined means - STARTUP: 'STARTUP', // reading redux-perist file, maybe wait for devic things?
     VERIFY: 'VERIFY', // testing if apiToken is expired
     EXPIRED: 'EXPIRED',
     OK: 'OK',
@@ -107,6 +108,24 @@ const checkCode = (values: CheckCodeValues): CheckCodeAction => withPromise({ ty
 
 //
 function* sessionSaga(): Generator<*, *, *> {
+
+    yield waitRehydrate();
+
+    {
+        const {session:{ token }} = yield select();
+
+        if (token) {
+            yield put(patch({ status:SS.VERIFY }));
+            yield fork(function*() {
+                yield delay(0);
+                console.log('doing verify now');
+                yield put(verify());
+            });
+        } else {
+            yield put(patch({ status:SS.OUT }));
+        }
+    }
+
     while (true) {
         const [ loginAction, registerAction, verifyAction ] = yield race([
             take(LOGIN),
@@ -115,19 +134,21 @@ function* sessionSaga(): Generator<*, *, *> {
         ]);
 
         const { type, resolve, reject, values:body } = loginAction || registerAction || verifyAction;
-        console.log('type:', type, 'body:', body);
+
+        console.log('type:', type);
+        if (type === LOGIN) yield put(patch({ email:body.email }));
 
         const { status, reply } = (registerAction && (yield call(fetchApi, 'register' , { method:'POST', body }))) ||
                                   (loginAction    && (yield call(fetchApi, 'login'    , { method:'POST', body }))) ||
                                   (verifyAction   && (yield call(fetchApi, 'user'     , { method:'GET'        })));
 
         if ([200, 201].includes(status)) { // 201 for register
-            const { api_token:token, email, id } = reply;
-            fetchApi.TOKEN = token;
+            const { api_token:token, email, id } = reply.data || reply; // in case of login/register, there is a data key nesting
             yield put(patch({ email, id, status:SS.OK, token }));
+            if (type === VERIFY) AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
             resolve();
         } else {
-            if (verifyAction) {
+            if (type === VERIFY) {
                 // really only if status === 401, but for now just if any error, mark it as out
                 yield put(patch({ status:SS.OUT }));
                 resolve();
@@ -139,16 +160,30 @@ function* sessionSaga(): Generator<*, *, *> {
 }
 sagas.push(sessionSaga);
 
-function* registerTask({}: RegisterAction): Generator<*, *, *> {
+//
+function* forgotTask(): Generator<*, *, *> {
+    while (true) {
+        const { values } = yield take(FORGOT);
 
+        yield put(patch({ email:values.email }));
+
+    }
 }
 
-function* loginTask({}: LoginAction): Generator<*, *, *> {
+//
+function* checkCodeTask(): Generator<*, *, *> {
+    while (true) {
+        const { values } = yield take(CHECK_CODE);
 
+    }
 }
 
-function* verifyTask({}: VerifyAction): Generator<*, *, *> {
+//
+function* resetTask(): Generator<*, *, *> {
+    while (true) {
+        const { values } = yield take(RESET);
 
+    }
 }
 
 //
@@ -156,7 +191,7 @@ type Action = PatchAction;
 
 export default function reducer(state: Shape = INITIAL, action:Action): Shape {
     switch(action.type) {
-        case PATCH: return { state, ...state.data };
+        case PATCH: return { ...state, ...action.data };
         default: return state;
     }
 }

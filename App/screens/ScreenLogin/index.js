@@ -4,14 +4,14 @@ import React, { Component } from 'react'
 import { View, Text, ScrollView } from 'react-native'
 import { Field } from 'redux-form'
 import Button from 'react-native-buttonex'
+import { connect } from 'react-redux'
 
 import { testIfBlank, testIfSameAs, testIfEmail } from '../../utils/rules'
-
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
 import { AppNavigatorUtils } from '../../routes/AppNavigator'
-import withBaseForm from '../../components/withBaseForm'
 import { login } from '../../store/session'
 
+import withBaseForm from '../../components/withBaseForm'
 import FieldText from '../../components/Fields/FieldText'
 import Gap from '../../components/Gap'
 
@@ -19,11 +19,20 @@ import styles from  './styles'
 import STYLES from '../../config/styles'
 
 import type { FormProps } from 'redux-form'
+import type { Shape as AppShape } from '../../store'
 
 type OwnProps = {||}
 
-type Props = {|
+type ConnectedProps = {|
     ...OwnProps,
+    //
+    initialValues: {|
+        email: string | void
+    |}
+|}
+
+type Props = {|
+    ...ConnectedProps,
     ...FormProps
 |}
 
@@ -74,6 +83,16 @@ const ScreenLoginFormed = withBaseForm({
     }
 })
 
-const ScreenLogin = ScreenLoginFormed(ScreenLoginDumb)
+const ScreenLoginConnected = connect(
+    function({ session:{ email } }: AppShape) {
+        return {
+            initialValues: {
+                email
+            }
+        }
+    }
+)
+
+const ScreenLogin = ScreenLoginConnected(ScreenLoginFormed(ScreenLoginDumb))
 
 export default ScreenLogin
