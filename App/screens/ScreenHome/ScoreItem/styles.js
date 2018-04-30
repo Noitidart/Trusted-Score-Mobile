@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 16,
         color: COLOR.textColorPrimary,
-        flex: 1
+        flex: 1,
+        fontWeight: '500' // against material design
     },
     timestampNoColumn: {
         color: COLOR.textColorSecondary,
