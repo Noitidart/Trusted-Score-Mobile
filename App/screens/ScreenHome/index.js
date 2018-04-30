@@ -10,6 +10,7 @@ import AppNavigator, { AppNavigatorUtils } from '../../routes/AppNavigator'
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
 import { hashStringToColor } from '../../utils/hash'
 
+import ScoreItem from './ScoreItem'
 import Icon from '../../components/Icon'
 
 import styles from  './styles'
@@ -24,7 +25,7 @@ type Props = {|
 
 class ScreenHome extends Component<Props> {
     static navigationOptions = {
-        title: 'Home'
+        title: 'Trusted Score'
     }
 
     didFocusProbe = this.props.navigation.addListener('didFocus', () => {
@@ -69,6 +70,8 @@ class ScreenHome extends Component<Props> {
                             <TextInput style={styles.descInput} placeholder="Message (optional)" placeholderColor={COLOR.textColorSecondary} underlineColorAndroid="transparent" />
                         </View>
                     </View>
+                    <ScoreItem name="Noitidart" score="9.6" updatedAt="5 min" pressPayload={{ id:1 }} onPress={this.handleScoreItemPress} />
+                    <ScoreItem name="Yasir Khalid Ali" score="10" message="Was a very long long long long long long long week!!!" updatedAt="2 days" pressPayload={{ id:2 }} onPress={this.handleScoreItemPress} />
                 </View>
             // </ScrollView>
         )
@@ -76,6 +79,10 @@ class ScreenHome extends Component<Props> {
 
     gotoProfile = (id?: AccountId) => AppNavigatorUtils.getNavigation().navigate({ routeName:'profile', key:id, params:{ id } })
     gotoYourProfile = () => this.gotoProfile()
+
+    handleScoreItemPress = ({ id }, kind) => {
+        console.log('kind:', kind, 'id:', id);
+    }
 }
 
 export default ScreenHome

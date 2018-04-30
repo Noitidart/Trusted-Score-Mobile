@@ -70,6 +70,16 @@ const styles = StyleSheet.create({
     descInput: {
         fontSize: 16,
         color: COLOR.textColorPrimary
+    },
+
+
+
+
+    scoreItem: {
+        height: 72, // two line
+        flexDirection: 'row',
+        alignItems: 'center',
+
     }
 })
 

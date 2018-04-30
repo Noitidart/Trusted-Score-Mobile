@@ -2433,22 +2433,37 @@ type Props = {|
 
 class Icon extends Component<Props> {
     static defaultProps = {
-        set: 'Ionicons4'
+        set: 'Material'
     }
 
     render() {
         const { set, name, style, animated, ...textProps } = this.props;
 
-        const icons = ICONS[set];
-        if (!icons) throw new Error(`Invalid icon set name: "${set}"`);
+        const Wrapper = animated ? Animated.Text : Text;
 
-        const char = ICONS[set][name];
-        if (!char) throw new Error(`Invalid icon name: "${name}"`);
+        if (name.toUpperCase() === name) { // its all upper case, so assume we just want the letters out
+            const letter = name;
+            let fontStyle;
+            if (set) {
+                if (Object.keys(ICONS).includes(set)) {
+                    // then dont use any fontStyle, use default font - as its a set id, which is only for non-letters
+                } else {
+                    fontStyle = { fontFamily:set }
+                }
+            } // else no style, use default font
+            return <Wrapper style={style ? [style, fontStyle] : fontStyle} {...textProps}>{letter}</Wrapper>
+        }
+
+        if (!ICONS.hasOwnProperty(set)) throw new Error(`Invalid icon set name: "${set}"`);
+
+        const iconSet = ICONS[set];
+        if (!iconSet.hasOwnProperty(name)) throw new Error(`Invalid icon name: "${name}" in set: "${set}"`);
+
+        const icon = iconSet[name];
 
         delete textProps.children; // devuser cannot submit children as props
 
-        const Wrapper = animated ? Animated.Text : Text;
-        return <Wrapper style={style ? [style, styles[set]] : styles[set]} {...textProps}>{char}</Wrapper>
+        return <Wrapper style={style ? [style, styles[set]] : styles[set]} {...textProps}>{icon}</Wrapper>
     }
 }
 
