@@ -35,7 +35,7 @@ class ScoreItem extends Component<Props> {
     render() {
         const { name, score, updatedAt, message } = this.props;
 
-        const initials = getInitials(name);
+        let initials = getInitials(name);
         const nameColor = hashStringToColor(name);
         const initialsColor = tinycolor.readability(COLOR.white, nameColor) >= 2 ? COLOR.white : COLOR.black;
 
