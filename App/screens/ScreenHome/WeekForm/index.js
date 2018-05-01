@@ -33,7 +33,7 @@ type ConnectedProps = {|
     initialValues: {|
         name: string,
         score?: number,
-        message: string
+        comment: string
     |},
     nameValue: string,
     scoreValue?: number
@@ -62,7 +62,7 @@ class WeekFormDumb extends Component<Props> {
                     </View>
                     <Score ref={this.refScore} defaultValue={scoreValue} />
                 </View>
-                <Field name="message" component={FieldText} style={styles.message} inputStyle={styles.messageInput} placeholder="Message (optional)" placeholderColor={COLOR.textColorSecondary} underlineColorAndroid="transparent" />
+                <Field name="comment" component={FieldText} style={styles.message} inputStyle={styles.messageInput} placeholder="Comment (optional)" placeholderColor={COLOR.textColorSecondary} underlineColorAndroid="transparent" />
             </View>
         )
     }
@@ -80,7 +80,7 @@ const WeekFormFormed = reduxForm({
 
 const WeekFormConnected = connect(
     function(state: AppShape) {
-        const {session:{ name, message, score }} = state;
+        const {session:{ name, score }} = state;
 
         const nameValue = formValueSelector(FORM)(state, 'name');
         const scoreValue = formValueSelector(FORM)(state, 'score');
@@ -88,11 +88,11 @@ const WeekFormConnected = connect(
         return {
             initialValues: {
                 name,
-                message,
-                score
+                comment: score.comment,
+                score: score.value
             },
             nameValue: nameValue !== undefined ? nameValue : name,
-            scoreValue: scoreValue !== undefined ? scoreValue : score
+            scoreValue: scoreValue !== undefined ? scoreValue : score.value
         }
     }
 )

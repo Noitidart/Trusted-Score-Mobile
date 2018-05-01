@@ -32,7 +32,8 @@ type FetchOut = {
 // should mutate init
 const PREPROCESS_BY_HOST: { [Host]:(input: string, init: FetchIn) => void } = {}
 
-fetchApi.DOMAIN = 'trustedscore.mlink.info/public/api';
+fetchApi.ORIGIN = 'http://localhost:8000/api';
+// fetchApi.ORIGIN = 'https://trustedscore.mlink.info/public/api';
 function* fetchApi(input: string, init: FetchIn = {}): Generator<*, FetchOut, *> {
 
     const preprocess = PREPROCESS_BY_HOST[getHost(input)];
@@ -108,7 +109,7 @@ function* fetchApi(input: string, init: FetchIn = {}): Generator<*, FetchOut, *>
     ////// end - preprocess
 
     if (!input.startsWith('http')) {
-        input = `https://${fetchApi.DOMAIN}/${input}`;
+        input = `${fetchApi.ORIGIN}/${input}`;
         init.headers.Authorization = 'Bearer ' + (yield select()).session.token;
     }
 

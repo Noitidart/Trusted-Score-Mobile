@@ -9,11 +9,20 @@ import { getSubmissionErrorFromLaravelReply, withPromise, waitRehydrate } from '
 import fetchApi from '../net/fetchApi'
 import { AppNavigatorUtils } from '../../routes/AppNavigator'
 
+type Score = {|
+    id: number,
+    value: number,
+    updatedAt: DateIso,
+    comment: null | string
+|}
+
 export type Shape = {|
     status?: SessionStatus, // never persisted
     email: string,
     id: AccountId,
-    token?: string
+    token?: string,
+    name: string,
+    score?: number
 |} | {||};
 
 const INITIAL = {};
@@ -143,8 +152,16 @@ function* sessionSaga(): Generator<*, *, *> {
                                   (verifyAction   && (yield call(fetchApi, 'user'     , { method:'GET'        })));
 
         if ([200, 201].includes(status)) { // 201 for register
-            const { api_token:token, email, id } = reply.data || reply; // in case of login/register, there is a data key nesting
-            yield put(patch({ email, id, status:SS.OK, token }));
+            const { api_token:token, email, id, name, score:scoreRaw } = reply.data || reply; // in case of login/register, there is a data key nesting
+
+            const score = !scoreRaw ? null : {
+                id: scoreRaw.id,
+                value: scoreRaw.value,
+                updatedAt: scoreRaw.updated_at,
+                comment: scoreRaw.comment
+            }
+
+            yield put(patch({ email, id, status:SS.OK, token, name, score }));
             if (type === VERIFY) AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
             resolve();
         } else {

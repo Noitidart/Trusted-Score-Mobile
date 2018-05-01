@@ -24,7 +24,7 @@ class Avatar extends Component<Props> {
 
         const initials = getInitials(name);
         const nameColor = hashStringToColor(name);
-        const initialsColor = tinycolor.readability(COLOR.white, nameColor) >=1.3 ? COLOR.white : COLOR.black;
+        const initialsColor = tinycolor.readability(COLOR.white, nameColor) >= 1.3 ? COLOR.white : COLOR.black;
 
         const avatarStyle = {
             width: size,
