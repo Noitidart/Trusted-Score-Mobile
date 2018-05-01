@@ -58,10 +58,11 @@ class WeekFormDumb extends Component<Props> {
 
         if (!isEqual(initialValues, initialValuesPrev)) {
             console.log('DID INITIALIZED!!!!! dirty:', dirty);
-            // if dirty, then trigger submit again
             if (dirty) {
-                console.log('is dirty after initialize so submitDebounced again');
+                console.log('yes! some field is dirty, so resubmit');
                 this.submitDebounced();
+            } else {
+                console.log('nothing is dirty, so no need to submit again');
             }
         }
     }
