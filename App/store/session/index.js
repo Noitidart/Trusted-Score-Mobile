@@ -213,5 +213,5 @@ export default function reducer(state: Shape = INITIAL, action:Action): Shape {
     }
 }
 
-export type { SessionStatus }
+export type { SessionStatus, Score }
 export { SS, login, logout, register, forgot as forgotPassword, reset as resetPassword, checkCode }
