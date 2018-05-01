@@ -35,7 +35,8 @@ class FieldSlider extends Component<Props, State> {
         const { dragValue } = this.state;
         const { dragValue:dragValuePrev } = statePrev;
 
-        if (!this.isFocused && dragValue === value) {
+        if (!this.isFocused && dragValue !== dragValuePrev && dragValue === value) {
+            console.log('doing setState');
             this.setState(() => ({ dragValue:undefined }));
         }
 

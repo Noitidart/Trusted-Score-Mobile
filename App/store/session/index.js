@@ -3,7 +3,8 @@
 import { delay } from 'redux-saga'
 import { call, fork, put, race, select, take, takeEvery } from 'redux-saga/effects'
 import { createTransform } from 'redux-persist'
-import { omit } from 'lodash'
+import { omit, assignWith } from 'lodash'
+import { keepUnchangedRefsOnly } from 'cmn/src/lodash'
 
 import { getSubmissionErrorFromLaravelReply, withPromise, waitRehydrate } from '../utils'
 import fetchApi from '../net/fetchApi'
@@ -120,6 +121,9 @@ function* sessionSaga(): Generator<*, *, *> {
 
     yield waitRehydrate();
 
+    while (!AppNavigatorUtils.getNavigation || !AppNavigatorUtils.getNavigation()) yield call(delay, 200);
+    console.log('ok got navigation');
+
     {
         const {session:{ token }} = yield select();
 
@@ -154,7 +158,8 @@ function* sessionSaga(): Generator<*, *, *> {
         if ([200, 201].includes(status)) { // 201 for register
             const { api_token:token, email, id, name, score:scoreRaw } = reply.data || reply; // in case of login/register, there is a data key nesting
 
-            const score = !scoreRaw ? null : {
+            // scoreRaw is null from backend, not undefined
+            const score = scoreRaw === null ? undefined : {
                 id: scoreRaw.id,
                 value: scoreRaw.value,
                 updatedAt: scoreRaw.updated_at,
@@ -204,14 +209,57 @@ function* resetTask(): Generator<*, *, *> {
 }
 
 //
+type WeekFormValues = {|
+    name: string,
+    score?: number,
+    comment?: string
+|}
+const SUBMIT_WEEK_FORM = A`SUBMIT_WEEK_FORM`;
+type SubmitWeekFormAction = { type:typeof SUBMIT_WEEK_FORM, values:WeekFormValues, promise:FormPromise, resolve:FormResolve, reject:FormReject }
+const submitWeekForm = (values: WeekFormValues): SubmitWeekFormAction => withPromise({ type:SUBMIT_WEEK_FORM, values });
+
+function* submitWeekFormWorker({ values, resolve }: SubmitWeekFormAction): Generator<*, *, *> {
+    console.log('submitWeekFormWorker :: values:', values);
+
+    yield call(delay, 10000);
+
+    resolve();
+    console.log('did resolve will patch after 2s delay');
+
+    yield call(delay, 2000);
+    console.log('ok will patch now');
+    yield put(patch({
+        score: {
+            value: values.score,
+            comment: values.comment
+        },
+        name
+    }));
+    console.log('did patch');
+}
+function* submitWeekFormWatcher(): Generator<*, *, *> {
+    yield takeEvery(SUBMIT_WEEK_FORM, submitWeekFormWorker);
+}
+sagas.push(submitWeekFormWatcher);
+
+
+//
 type Action = PatchAction;
 
 export default function reducer(state: Shape = INITIAL, action:Action): Shape {
     switch(action.type) {
-        case PATCH: return { ...state, ...action.data };
+        case PATCH: {
+            return {
+                ...state,
+                ...action.data,
+                score: action.data.hasOwnProperty('score') ? (action.data.score ? { ...(state.score || {}), ...action.data.score }
+                                                                                : action.data.score)
+                                                           : state.score
+            }
+        }
         default: return state;
     }
 }
 
 export type { SessionStatus, Score }
-export { SS, login, logout, register, forgot as forgotPassword, reset as resetPassword, checkCode }
+export { SS, login, logout, register, forgot as forgotPassword, reset as resetPassword, checkCode, submitWeekForm }
