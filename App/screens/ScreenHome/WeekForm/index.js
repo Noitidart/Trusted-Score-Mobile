@@ -5,7 +5,7 @@ import { ActivityIndicator, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { reduxForm, Field, formValueSelector, startSubmit } from 'redux-form'
 import tinycolor from 'tinycolor2'
-import { debounce } from 'lodash'
+import { debounce, isEqual } from 'lodash'
 
 
 import COLOR from '../../../config/color';
@@ -47,22 +47,21 @@ type Props = {|
     ...FormProps
 |}
 
-const FORM = 'my-week-wer';
+const FORM = 'week';
 
 class WeekFormDumb extends Component<Props> {
     scoreEl: null | Element<typeof Score> = null
 
     componentDidUpdate(propsPrev: Props) {
-        const { submitting, dirty } = this.props;
-        const { submitting:submittingPrev, dirty:dirtyPrev } = propsPrev;
+        const { initialValues, dirty } = this.props;
+        const { initialValues:initialValuesPrev } = propsPrev;
 
-        if (submitting !== submittingPrev && !submitting) {
-            console.log('submitting finished, lets check if anything is dirty, if it is, then resubmit, dirty:', dirty);
+        if (!isEqual(initialValues, initialValuesPrev)) {
+            console.log('DID INITIALIZED!!!!! dirty:', dirty);
+            // if dirty, then trigger submit again
             if (dirty) {
-                console.log('yes! some field is dirty, so resubmit');
-                // this.prepareSubmit();
-            } else {
-                console.log('nothing is dirty, so no need to submit again');
+                console.log('is dirty after initialize so submitDebounced again');
+                this.submitDebounced();
             }
         }
     }
@@ -70,7 +69,7 @@ class WeekFormDumb extends Component<Props> {
     render() {
         const { nameValue, scoreValue, submitting } = this.props;
 
-        // console.log('WeekFormDumb :: props:', Object.entries(this.props).reduce((acc, [key, value]) => Object.assignOne(acc, key, ['string', 'boolean', 'number'].includes(typeof value) ? value : typeof value)));
+        // console.log('WeekFormDumb :: props:', Object.entries(this.props).reduce((acc, [key, value]) => Object.assignOne(acc, key, ['undefined', 'string', 'boolean', 'number', 'object'].includes(typeof value) ? value : typeof value)));
 
         return (
             <View style={styles.weekForm}>
@@ -114,8 +113,7 @@ const WeekFormConnected = connect(
     function(state: AppShape) {
         const {session:{ name, score={} }} = state;
 
-        const nameValue = formValueSelector(FORM)(state, 'name');
-        const scoreValue = formValueSelector(FORM)(state, 'score');
+        const { name:nameValue, score:scoreValue } = formValueSelector(FORM)(state, 'name', 'score');
 
         return {
             initialValues: {
@@ -131,4 +129,5 @@ const WeekFormConnected = connect(
 
 const WeekForm = WeekFormConnected(WeekFormFormed(WeekFormDumb))
 
+export { FORM }
 export default WeekForm

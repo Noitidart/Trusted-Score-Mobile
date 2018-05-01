@@ -3,12 +3,13 @@
 import { delay } from 'redux-saga'
 import { call, fork, put, race, select, take, takeEvery } from 'redux-saga/effects'
 import { createTransform } from 'redux-persist'
+import { SET_SUBMIT_SUCCEEDED } from 'redux-form/es/actionTypes'
 import { omit, assignWith } from 'lodash'
-import { keepUnchangedRefsOnly } from 'cmn/src/lodash'
 
 import { getSubmissionErrorFromLaravelReply, withPromise, waitRehydrate } from '../utils'
 import fetchApi from '../net/fetchApi'
 import { AppNavigatorUtils } from '../../routes/AppNavigator'
+import { FORM as WEEK_FORM_NAME } from '../../screens/ScreenHome/WeekForm'
 
 type Score = {|
     id: number,
@@ -226,14 +227,15 @@ function* submitWeekFormWorker({ values, resolve }: SubmitWeekFormAction): Gener
     resolve();
     console.log('did resolve will patch after 2s delay');
 
-    yield call(delay, 2000);
+    // wait for submitting to get flipped to false
+    yield take(action => action.type === SET_SUBMIT_SUCCEEDED && action.meta.form === WEEK_FORM_NAME);
     console.log('ok will patch now');
     yield put(patch({
         score: {
             value: values.score,
             comment: values.comment
         },
-        name
+        name: values.name
     }));
     console.log('did patch');
 }
