@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: COLOR.black
     },
-    messageInput: {
+    commentInput: {
         fontSize: 16,
         color: COLOR.textColorPrimary
         // alignSelf: 'flex-start',

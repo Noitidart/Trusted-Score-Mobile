@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
         height: 72, // three line
         flexDirection: 'row',
         alignItems: 'center',
-
+        backgroundColor: COLOR.white
     },
     primaryPosition: {
         paddingLeft: 16,

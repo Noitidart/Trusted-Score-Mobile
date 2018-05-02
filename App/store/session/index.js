@@ -5,26 +5,18 @@ import { call, fork, put, race, select, take, takeEvery } from 'redux-saga/effec
 import { createTransform } from 'redux-persist'
 import { SET_SUBMIT_SUCCEEDED } from 'redux-form/es/actionTypes'
 import { omit, assignWith } from 'lodash'
+import { pickAsByString } from 'cmn/src/all'
 
 import { getSubmissionErrorFromLaravelReply, withPromise, waitRehydrate } from '../utils'
 import fetchApi from '../net/fetchApi'
 import { AppNavigatorUtils } from '../../routes/AppNavigator'
 import { FORM as WEEK_FORM_NAME } from '../../screens/ScreenHome/WeekForm'
 
-type Score = {|
-    id: number,
-    value: number,
-    updatedAt: DateIso,
-    comment: null | string
-|}
-
 export type Shape = {|
     status?: SessionStatus, // never persisted
+    user: User,
     email: string,
-    id: AccountId,
-    token?: string,
-    name: string,
-    score?: number
+    token?: string
 |} | {||};
 
 const INITIAL = {};
@@ -38,7 +30,24 @@ export const transform = createTransform(
 
 const A = ([actionType]: string[]) => 'SESSION_' + actionType; // Action type prefixer
 
-type AccountId = number;
+type Score = {|
+    id: number,
+    userId: UserId,
+    comment: null | string,
+    value: number,
+    createdAt: DateIso, // TODO:
+    updatedAt: DateIso
+|}
+type ScoreId = $PropertyType<Score, 'id'>
+
+type User = {|
+    id: number,
+    name: string,
+    avatarPath: string | null,
+    score: Score | void
+|}
+type UserId = $PropertyType<User, 'id'>
+
 type FormResolution = void;
 type FormResolve = FormResolution => void;
 type FormReject = SubmissionErrorType => void;
@@ -157,17 +166,15 @@ function* sessionSaga(): Generator<*, *, *> {
                                   (verifyAction   && (yield call(fetchApi, 'user'     , { method:'GET'        })));
 
         if ([200, 201].includes(status)) { // 201 for register
-            const { api_token:token, email, id, name, score:scoreRaw } = reply.data || reply; // in case of login/register, there is a data key nesting
+            const { api_token:token, email, ...userRaw } = reply;
 
-            // scoreRaw is null from backend, not undefined
-            const score = scoreRaw === null ? undefined : {
-                id: scoreRaw.id,
-                value: scoreRaw.value,
-                updatedAt: scoreRaw.updated_at,
-                comment: scoreRaw.comment
-            }
+            yield put(patch({
+                status:SS.OK,
+                email,
+                token,
+                user: getUser(userRaw)
+            }));
 
-            yield put(patch({ email, id, status:SS.OK, token, name, score }));
             if (type === VERIFY) AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
             resolve();
         } else {
@@ -239,16 +246,10 @@ function* submitWeekFormWorker({ values, resolve }: SubmitWeekFormAction): Gener
         // wait for submitting to get flipped to false
         yield take(action => action.type === SET_SUBMIT_SUCCEEDED && action.meta.form === WEEK_FORM_NAME);
 
-        const { name, score:scoreRaw } = reply.data || reply; // in case of login/register, there is a data key nesting
+        const userRaw = reply;
+        const user = getUser(userRaw);
 
-        // scoreRaw is null from backend, not undefined
-        const score = scoreRaw === null ? undefined : {
-            value: scoreRaw.value,
-            updatedAt: scoreRaw.updated_at,
-            comment: scoreRaw.comment
-        };
-
-        yield put(patch({ score, name }));
+        yield put(patch({ user }));
     }
 }
 function* submitWeekFormWatcher(): Generator<*, *, *> {
@@ -256,6 +257,35 @@ function* submitWeekFormWatcher(): Generator<*, *, *> {
 }
 sagas.push(submitWeekFormWatcher);
 
+//
+type FetchWeekUsersResolution = Score[];
+type FetchWeekUsersResolve = FetchWeekUsersResolution => void;
+type FetchWeekUsersReject = string[] => void;
+type FetchWeekUsersPromise = Promise<FetchWeekUsersResolution>
+const FETCH_WEEK_SCORES = A`FETCH_WEEK_SCORES`;
+type FetchWeekUsersAction = { type:typeof FETCH_WEEK_SCORES, values:WeekFormValues, promise:FetchWeekUsersPromise, resolve:FetchWeekUsersResolve, reject:FetchWeekUsersReject }
+const fetchWeekUsers = (values: WeekFormValues): SubmitWeekFormAction => withPromise({ type:FETCH_WEEK_SCORES });
+
+function* fetchWeekUsersWorker({ resolve, reject }: SubmitWeekFormAction): Generator<*, *, *> {
+
+    yield call(delay, 10000);
+
+    const { reply, status } = yield fetchApi('week/users');
+
+    if (status === 200) {
+        const users = reply.map(userRaw => getUser(userRaw));
+
+        // TODO: if sessionUserId is in it, then update yield put patch session.user
+        resolve(users);
+    } else {
+        console.log('fetchWeekUsersWorker :: bad status reply:', reply);
+        reject(`Unhandled response received from server. Status code: ${status}.`);
+    }
+}
+function* fetchWeekUsersWatcher(): Generator<*, *, *> {
+    yield takeEvery(FETCH_WEEK_SCORES, fetchWeekUsersWorker);
+}
+sagas.push(fetchWeekUsersWatcher);
 
 //
 type Action = PatchAction;
@@ -263,17 +293,85 @@ type Action = PatchAction;
 export default function reducer(state: Shape = INITIAL, action:Action): Shape {
     switch(action.type) {
         case PATCH: {
+
+            let userNext;
+            if (action.data.hasOwnProperty('user')) {
+                if (action.data.user) {
+                    const user = state.user;
+                    userNext = {
+                        ...(user || {}),
+                        ...action.data.user
+                    }
+
+                    if (action.data.user.hasOwnProperty('score')) {
+                        if (action.data.user.score) {
+                            const score = ((state.user || {}).score);
+                            scoreNext = {
+                                ...(score || {}),
+                                ...action.data.user.score
+                            }
+                        } else {
+                            scoreNext = action.data.user.score;
+                        }
+                        userNext.score = scoreNext;
+                    }
+                } else {
+                    userNext = action.data.user;
+                }
+            }
+
             return {
                 ...state,
                 ...action.data,
-                score: action.data.hasOwnProperty('score') ? (action.data.score ? { ...(state.score || {}), ...action.data.score }
-                                                                                : action.data.score)
-                                                           : state.score
+                user: userNext
             }
         }
         default: return state;
     }
 }
 
-export type { SessionStatus, Score }
-export { SS, login, logout, register, forgot as forgotPassword, reset as resetPassword, checkCode, submitWeekForm }
+function getScore(scoreRaw: null | {}): Score | void {
+    // scoreRaw is null from backend, not undefined
+    if (!scoreRaw) {
+        return undefined;
+    } else {
+        // console.log('getScore ::', pickAsByString(scoreRaw,
+        //     'id',
+        //     'user_id as userId',
+        //     'value',
+        //     'comment',
+        //     'created_at as createdAt',
+        //     'updated_at as updatedAt'
+        // ));
+        return pickAsByString(scoreRaw,
+            'id',
+            'user_id as userId',
+            'value',
+            'comment',
+            'created_at as createdAt',
+            'updated_at as updatedAt'
+        )
+    }
+}
+function getUser(userRaw:{}): User {
+    const scoreRaw = userRaw.score;
+    // console.log('getUser:', ({
+    //     ...pickAsByString(userRaw,
+    //         'id',
+    //         'name',
+    //         'avatar_path as avatarPath'
+    //     ),
+    //     score: getScore(scoreRaw)
+    // }));
+    return ({
+        ...pickAsByString(userRaw,
+            'id',
+            'name',
+            'avatar_path as avatarPath'
+        ),
+        score: getScore(scoreRaw)
+    });
+}
+
+export type { SessionStatus, Score, UserId, ScoreId }
+export { SS, login, logout, register, forgot as forgotPassword, reset as resetPassword, checkCode, submitWeekForm, fetchWeekUsers }

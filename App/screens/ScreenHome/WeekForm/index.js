@@ -82,7 +82,7 @@ class WeekFormDumb extends Component<Props> {
                     </View>
                     <Score ref={this.refScore} defaultValue={scoreValue} />
                 </View>
-                <Field name="comment" component={FieldText} style={styles.message} inputStyle={styles.messageInput} onChange={this.submitDebounced} placeholder="Comment (optional)" placeholderColor={COLOR.textColorSecondary} underlineColorAndroid="transparent" />
+                <Field name="comment" component={FieldText} style={styles.comment} inputStyle={styles.commentInput} onChange={this.submitDebounced} placeholder="Comment (optional)" placeholderColor={COLOR.textColorSecondary} underlineColorAndroid="transparent" />
                 { submitting && <ActivityIndicator style={{ position:'absolute' }} /> }
             </View>
         )
@@ -112,7 +112,7 @@ const WeekFormFormed = reduxForm({
 
 const WeekFormConnected = connect(
     function(state: AppShape) {
-        const {session:{ name, score={} }} = state;
+        const {session:{user:{ name, score={} }}} = state;
 
         const { name:nameValue, score:scoreValue } = formValueSelector(FORM)(state, 'name', 'score');
 
