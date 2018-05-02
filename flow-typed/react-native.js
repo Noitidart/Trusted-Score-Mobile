@@ -35,7 +35,7 @@ type ScrollEvent = {
 }
 
 // FlatList
-type RenderItem = ({ item:{ key:string }, index:number }) => Element
+type RenderItem = ({ item:any, index:number }) => Element
 type ScrollToIndex = ({ animated?:boolean, index:number, viewOffset?:number, viewPosition?:number }) => void // https://github.com/facebook/react-native/blob/master/Libraries/Lists/FlatList.js#L345
 
 // Keyboard listener

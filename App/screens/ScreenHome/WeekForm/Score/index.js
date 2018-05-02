@@ -10,7 +10,7 @@ type Props = {|
 |}
 
 type State = {|
-    value?: number
+    value?: number | null
 |}
 
 const NO_VALUE_LABEL = '?';
@@ -23,11 +23,12 @@ class Score extends Component<Props, State> {
     render() {
         const { value } = this.state;
         const { defaultValue } = this.props;
+        console.log('defaultValue:', defaultValue);
 
         return (
             <View style={styles.score}>
                 <Text style={styles.scoreText}>
-                    { value === undefined ? (defaultValue === undefined ? NO_VALUE_LABEL : defaultValue) : value }
+                    { value === undefined ? ([null, undefined].includes(defaultValue) ? NO_VALUE_LABEL : defaultValue) : value }
                 </Text>
             </View>
         )

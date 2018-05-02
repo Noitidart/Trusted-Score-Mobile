@@ -21,7 +21,11 @@ import STYLES from '../../config/styles'
 import type { User, UserId } from '../../store/session'
 import type { Shape as AppShape } from '../../store'
 
-type OwnProps = {||}
+type OwnProps = {|
+    navigation:{|
+        addListener: () => void
+    |}
+|}
 
 type Props = {|
     ...OwnProps,
@@ -35,6 +39,10 @@ type State = {|
     error?: string,
     users?: User[]
 |}
+
+function extractUserId(item: User, index: number) {
+    return item.id.toString();
+}
 
 class ScreenHomeDumb extends Component<Props, State> {
     static navigationOptions = {
@@ -53,7 +61,7 @@ class ScreenHomeDumb extends Component<Props, State> {
     })
 
     componentDidMount() {
-        this.fetchScores();
+        this.fetchWeek();
     }
 
     render() {
@@ -67,15 +75,14 @@ class ScreenHomeDumb extends Component<Props, State> {
         let emptyComponent;
         if (!data.length) {
             emptyComponent = (
-                <View style={styles.fakeScoreItem}>
+                <View style={styles.empty}>
                     { isFetching && <ActivityIndicator size="large" /> }
                     { !!error && <Text>{error}</Text> }
                     { !!users && users.length === 1 && <Text>Only you have submitted a score so far this week.</Text> }
                     { !!users && !users.length && <Text>No one has submitted a score this week yet.</Text> }
-                    <Gap size={2} />
                     { !isFetching &&
                         <View style={styles.refreshButtonWrap}>
-                            <Button title="Refresh" onPress={this.fetchScores} noBackground />
+                            <Button title="Refresh" onPress={this.fetchWeek} bordered />
                         </View>
                     }
                 </View>
@@ -85,7 +92,8 @@ class ScreenHomeDumb extends Component<Props, State> {
         return (
             // <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
                 <View style={STYLES.screen}>
-                    <FlatList ListHeaderComponent={WeekForm} data={data} renderItem={this.renderItem} ListEmptyComponent={emptyComponent} />
+                    <FlatList style={{ backgroundColor:'skyblue' }} ListHeaderComponent={WeekForm} data={data} renderItem={this.renderItem} keyExtractor={extractUserId} />
+                    { emptyComponent }
                 </View>
             // </ScrollView>
         )
@@ -96,7 +104,7 @@ class ScreenHomeDumb extends Component<Props, State> {
 
     handleScoreItemPress = ({ userId }, kind) => this.gotoProfile(userId)
 
-    fetchScores = async () => {
+    fetchWeek = async () => {
         const { dispatch } = this.props;
 
         this.setState(() => ({ isFetching:true, error:undefined }));
@@ -106,7 +114,7 @@ class ScreenHomeDumb extends Component<Props, State> {
             users = await dispatch(fetchWeekUsers()).promise;
         } catch (error) {
             if (typeof error === 'string') {
-                if (this.state.users == flase) {
+                if (this.state.users == false) {
                     this.setState(() => ({ error }))
                 } else {
                     alert(error);
@@ -120,7 +128,7 @@ class ScreenHomeDumb extends Component<Props, State> {
         this.setState(() => ({ users }))
     }
 
-    renderItem = ({ item:user, index }) => <ScoreItem key={user.id} name={user.name} {...user.score} pressPayload={{ userId:user.id }} onPress={this.handleScoreItemPress} />
+    renderItem = ({ item:user, index }) => <ScoreItem name={user.name} {...user.score} pressPayload={{ userId:user.id }} onPress={this.handleScoreItemPress} />
 }
 
 const ScreenHomeConnected = connect(

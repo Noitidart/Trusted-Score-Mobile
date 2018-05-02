@@ -5,13 +5,14 @@ import { StyleSheet } from 'react-native'
 import COLOR from '../../config/color'
 
 const styles = StyleSheet.create({
-    fakeScoreItem: {
-        height: 72,
-        backgroundColor: COLOR.white,
+    empty: {
+        flex: 1,
+        // backgroundColor: COLOR.white,
         justifyContent: 'center',
         alignItems: 'center'
     },
     refreshButtonWrap: {
+        marginTop: 16,
         width: 100
     }
 })

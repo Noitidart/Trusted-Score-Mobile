@@ -45,7 +45,7 @@ class ScoreItem extends Component<Props> {
                     </View>
                     <View style={styles.lines}>
                         <View style={styles.titleRow}>
-                            <Text style={styles.title} numberOfLines={1}>{value}</Text>
+                            <Text style={styles.title} numberOfLines={1}>{value === null ? '?' : value}</Text>
                             <Text style={styles.timestampNoColumn}>{updatedAt}</Text>
                         </View>
                         <Text style={styles.subtitle} numberOfLines={1}>
