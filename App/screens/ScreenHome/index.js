@@ -61,7 +61,7 @@ class ScreenHomeDumb extends Component<Props, State> {
     })
 
     componentDidMount() {
-        // this.fetchWeek();
+        this.fetchWeek();
     }
 
     render() {
