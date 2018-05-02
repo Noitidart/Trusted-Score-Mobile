@@ -70,7 +70,10 @@ const COLOR = {
 
     colorButtonNormal: '#d6d7d7', // ?attr/colorButtonNormal => @color/button_material_light => #ffd6d7d7
     colorControlHighlight: 'rgba(0,0,0,0.121)', // ?attr/colorControlHighlight => @color/ripple_material_light => #1f000000
-    colorBackground: '#fafafa', // ?android:attr/colorBackground => @color/background_material_light => @color/material_grey_50 => #fffafafa
+    colorBackground: Platform.select({
+        android: '#fafafa', // ?android:attr/colorBackground => @color/background_material_light => @color/material_grey_50 => #fffafafa
+        ios: '#efeff4' // color picked from settings page (with initials gradient avatar)
+    }),
     colorBackgroundFloating: '#ffffff', //  ?android:attr/colorBackgroundFloating => @color/background_floating_material_light => @color/white => #ffffffff
 
     colorPrimary: '#3F51B5',
