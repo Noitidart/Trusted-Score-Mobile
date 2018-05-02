@@ -222,22 +222,34 @@ const submitWeekForm = (values: WeekFormValues): SubmitWeekFormAction => withPro
 function* submitWeekFormWorker({ values, resolve }: SubmitWeekFormAction): Generator<*, *, *> {
     console.log('submitWeekFormWorker :: values:', values);
 
-    yield call(delay, 10000);
+    const { reply, status } = yield fetchApi('user', {
+        method: 'post',
+        body: {
+            name: values.name,
+            score: {
+                value: values.score,
+                comment: values.comment
+            }
+        }
+    });
 
     resolve();
-    console.log('did resolve will patch after 2s delay');
 
-    // wait for submitting to get flipped to false
-    yield take(action => action.type === SET_SUBMIT_SUCCEEDED && action.meta.form === WEEK_FORM_NAME);
-    console.log('ok will patch now');
-    yield put(patch({
-        score: {
-            value: values.score,
-            comment: values.comment
-        },
-        name: values.name
-    }));
-    console.log('did patch');
+    if (status === 200) {
+        // wait for submitting to get flipped to false
+        yield take(action => action.type === SET_SUBMIT_SUCCEEDED && action.meta.form === WEEK_FORM_NAME);
+
+        const { name, score:scoreRaw } = reply.data || reply; // in case of login/register, there is a data key nesting
+
+        // scoreRaw is null from backend, not undefined
+        const score = scoreRaw === null ? undefined : {
+            value: scoreRaw.value,
+            updatedAt: scoreRaw.updated_at,
+            comment: scoreRaw.comment
+        };
+
+        yield put(patch({ score, name }));
+    }
 }
 function* submitWeekFormWatcher(): Generator<*, *, *> {
     yield takeEvery(SUBMIT_WEEK_FORM, submitWeekFormWorker);
