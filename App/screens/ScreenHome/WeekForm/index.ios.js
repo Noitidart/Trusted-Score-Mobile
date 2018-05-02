@@ -19,6 +19,7 @@ import { submitWeekForm } from '../../../store/session'
 import Avatar from '../../../components/Avatar'
 import Icon from '../../../components/Icon'
 import FieldText from '../../../components/Fields/FieldText'
+import FieldHidden from '../../../components/Fields/FieldHidden'
 import FieldSlider from '../../../components/Fields/FieldSlider'
 import Score from './Score'
 
@@ -74,15 +75,22 @@ class WeekFormDumb extends Component<Props> {
 
         return (
             <View style={styles.weekForm}>
+                <Field name="name" component={FieldHidden} />
                 <View style={styles.topRow}>
                     <Avatar name={nameValue} size={64} fontSize={34} fontSizeOver={24} onShowEdit={this.handleShowEdit} canShowEdit />
                     <View style={styles.midCol}>
-                        <Field name="name" component={FieldText} style={styles.name} autoCapitalize="words" autoCorrect={false} inputStyle={styles.nameInput} onChange={this.submitDebounced} placeholder="Your Name" placeholderColor={COLOR.textColorSecondary} underlineColorAndroid="transparent" />
-                        <Field name="score" component={FieldSlider} style={styles.slider} format={formatBlankAsUndefined} icon="star" iconSet="Material" onChange={this.submitDebounced} maximumValue={10} minimumValue={0}  onDrag={this.handleScoreDrag} parse={formatFixedWithoutZeroes} step={0.1} />
+                        <View style={styles.scoreRow}>
+                            <Score ref={this.refScore} defaultValue={scoreValue} />
+                            <Field name="score" component={FieldSlider} style={styles.slider} controlStyle={styles.sliderControl} format={formatBlankAsUndefined} onChange={this.submitDebounced} maximumValue={10} minimumValue={0} onDrag={this.handleScoreDrag} parse={formatFixedWithoutZeroes} step={0.1} />
+                        </View>
+                        <Text style={styles.name}>{nameValue}</Text>
+                        <View style={styles.divider} />
                     </View>
-                    <Score ref={this.refScore} defaultValue={scoreValue} />
                 </View>
-                <Field name="comment" component={FieldText} style={styles.comment} inputStyle={styles.commentInput} onChange={this.submitDebounced} placeholder="Comment (optional)" placeholderColor={COLOR.textColorSecondary} underlineColorAndroid="transparent" />
+                <View style={styles.commentRow}>
+                    <Text style={styles.commentLabel}>Comment</Text>
+                    <Field name="comment" component={FieldText} style={styles.comment} inputStyle={styles.commentInput} onChange={this.submitDebounced} placeholder="optional" underlineColorAndroid="transparent" />
+                </View>
                 { submitting && <ActivityIndicator style={{ position:'absolute' }} /> }
             </View>
         )

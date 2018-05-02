@@ -52,7 +52,6 @@ class ScreenLoginDumb extends Component<Props> {
                 <Field name="password" component={FieldText} autoCapitalize="none" placeholder="Password" returnKeyType="go" disableFullscreenUI secureTextEntry />
                 <Gap size={5} />
                 <Button title="Login" onPress={submit} disabled={submitFailed && invalid} loading={submitting} bold />
-                <Gap size={2} />
                 <Button title="Forgot Password" onPress={this.gotoForgot} disabled={submitting} noBackground small />
                 <View style={styles.registerButtonWrap}>
                     <Button title="Not signed up? Register here!" onPress={this.gotoRegister} disabled={submitting} flat small />

@@ -52,7 +52,7 @@ class ScreenForgotDumb extends Component<Props> {
                 <Gap size={4} />
                 <Field name="email" component={FieldText} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" placeholder="Email" returnKeyType="go" disableFullscreenUI />
                 <Gap size={5} />
-                <Button title="Send Password Reset" onPress={submit} disabled={anyTouched && invalid} loading={submitting} />
+                <Button title="Send Password Reset" onPress={submit} disabled={anyTouched && invalid} loading={submitting} bold />
                 <Gap size={5} />
                 <View style={STYLES.formBottomButtonWrap}>
                     <Button title="Back" onPress={this.goBack} noBackground />

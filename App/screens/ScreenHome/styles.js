@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
         flexGrow: 1
     },
     list: {
-        flexGrow: 0
+        // flexGrow: 0
     },
     refreshButtonWrap: {
         marginTop: 16,

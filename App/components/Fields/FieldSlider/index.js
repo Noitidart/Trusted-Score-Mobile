@@ -17,6 +17,8 @@ type Props = {|
     onDrag?: (dragValue: number) => void,
     onBaseRef: (name: string, el: *) => void,
     onBaseLayout: () => void,
+    icon?: IconName,
+    iconSet?: IconSet,
     ...FieldProps,
     // ...sliderProps - https://facebook.github.io/react-native/docs/textinput.html#props
 |}
@@ -50,7 +52,7 @@ class FieldSlider extends Component<Props, State> {
 
         return (
             <View style={[styles.field, style]} onLayout={this.handleBaseLayout}>
-                <Icon style={styles.icon} name={icon} set={iconSet} />
+                { !!icon && <Icon style={styles.icon} name={icon} set={iconSet} /> }
                 <View style={styles.rightCol}>
                     <Text style={[styles.placeholder, { position:'absolute' }]}>
                         { placeholder }
