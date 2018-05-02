@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react'
-import { View, Text, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator, Platform } from 'react-native'
 import Button from 'react-native-buttonex'
 import { connect } from 'react-redux'
 import tinycolor from 'tinycolor2'
@@ -77,12 +77,13 @@ class ScreenHomeDumb extends Component<Props, State> {
             emptyComponent = (
                 <View style={styles.empty}>
                     { isFetching && <ActivityIndicator size="large" /> }
+                    {/* error is always undefined when isFetching is true, so no need for isFetching && */}
                     { !!error && <Text>{error}</Text> }
-                    { !!users && users.length === 1 && <Text>Only you have submitted a score so far this week.</Text> }
-                    { !!users && !users.length && <Text>No one has submitted a score this week yet.</Text> }
+                    { !isFetching && !!users && users.length === 1 && <Text>Only you have submitted a score so far this week.</Text> }
+                    { !isFetching && !!users && !users.length && <Text>No one has submitted a score this week yet.</Text> }
                     { !isFetching &&
                         <View style={styles.refreshButtonWrap}>
-                            <Button title="Refresh" onPress={this.fetchWeek} bordered />
+                            <Button title="Refresh" onPress={this.fetchWeek} bordered={Platform.OS !== 'ios'} />
                         </View>
                     }
                 </View>
@@ -125,7 +126,7 @@ class ScreenHomeDumb extends Component<Props, State> {
             }
         }
 
-        this.setState(() => ({ users }))
+        this.setState(() => ({ isFetching:false, users }))
     }
 
     renderItem = ({ item:user, index }) => <ScoreItem name={user.name} {...user.score} pressPayload={{ userId:user.id }} onPress={this.handleScoreItemPress} />

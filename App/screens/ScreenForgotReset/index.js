@@ -44,7 +44,7 @@ class ScreenForgotResetDumb extends Component<Props> {
                 <Gap size={2} />
                 <Field name="password_confirmation" component={FieldText} autoCapitalize="none" placeholder="Repeat Password" returnKeyType="go" disableFullscreenUI secureTextEntry />
                 <Gap size={5} />
-                <Button title="Reset Password &amp; Login" onPress={submit} disabled={anyTouched && invalid} loading={submitting} />
+                <Button title="Reset Password &amp; Login" onPress={submit} disabled={anyTouched && invalid} loading={submitting} bold />
                 <Gap size={5} />
                 <View style={STYLES.formBottomButtonWrap}>
                     <Button title="Back" onPress={this.goBack} noBackground />

@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react'
-import { ActivityIndicator, Text, View } from 'react-native'
+import { ActivityIndicator, Text, View, ActionSheetIOS, Alert, AlertIOS } from 'react-native'
 import { connect } from 'react-redux'
 import { reduxForm, Field, formValueSelector, startSubmit } from 'redux-form'
 import tinycolor from 'tinycolor2'
@@ -75,7 +75,7 @@ class WeekFormDumb extends Component<Props> {
         return (
             <View style={styles.weekForm}>
                 <View style={styles.topRow}>
-                    <Avatar name={nameValue} size={64} fontSize={34} fontSizeOver={24} />
+                    <Avatar name={nameValue} size={64} fontSize={34} fontSizeOver={24} onShowEdit={this.handleShowEdit} canShowEdit />
                     <View style={styles.midCol}>
                         <Field name="name" component={FieldText} style={styles.name} autoCapitalize="words" autoCorrect={false} inputStyle={styles.nameInput} onChange={this.submitDebounced} placeholder="Your Name" placeholderColor={COLOR.textColorSecondary} underlineColorAndroid="transparent" />
                         <Field name="score" component={FieldSlider} style={styles.slider} format={formatBlankAsUndefined} icon="star" iconSet="Material" onChange={this.submitDebounced} maximumValue={10} minimumValue={0}  onDrag={this.handleScoreDrag} parse={formatFixedWithoutZeroes} step={0.1} />
@@ -95,6 +95,35 @@ class WeekFormDumb extends Component<Props> {
         console.log('submitDebounced :: will hit submit');
         this.props.submit();
     }, 500)
+
+    handleShowEdit = async () => {
+        const options = ['Cancel', 'Take Photo', 'Choose Photo', 'Change Name'];
+        const selectedOptionIndex: number = await new Promise(resolve => ActionSheetIOS.showActionSheetWithOptions({ options, cancelButtonIndex: 0 }, resolve));
+
+        switch (selectedOptionIndex) {
+            case 1: {
+                    Alert.alert('Take Photo', '\nThis feature is not yet supported.');
+                break;
+            }
+            case 2: {
+                    Alert.alert('Choose Photo', '\nThis feature is not yet supported.');
+                break;
+            }
+            case 3: {
+                    const { nameValue } = this.props;
+                    const text: null | string = await new Promise(resolve => AlertIOS.prompt('Change Name', null, [
+                        { text:'Cancel', onPress:()=>resolve(null), style:'cancel' },
+                        { text:'OK', onPress:resolve },
+                    ], 'plain-text', nameValue));
+                    if (text && text !== nameValue) {
+                        const { change } = this.props;
+                        change('name', text); // apparently this doesnt trigger the onChange
+                        this.submitDebounced();
+                    }
+                break;
+            }
+        }
+    }
 
 }
 

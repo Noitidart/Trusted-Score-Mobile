@@ -46,11 +46,11 @@ class ScreenForgotConfirmDumb extends Component<Props> {
                 <Gap size={3} />
                 <Field name="code" component={FieldText} autoCapitalize="none" autoCorrect={false} disabled={submitting} placeholder="Code" returnKeyType="go" disableFullscreenUI />
                 <Gap size={5} />
-                <Button title="Verify Code" onPress={submit} disabled={submitFailed && invalid} loading={submitting} />
+                <Button title="Verify Code" onPress={submit} disabled={submitFailed && invalid} loading={submitting} bold />
                 <Gap size={5} />
-                <Button title="Send Another Code" onPress={this.goBack} disabled={submitting} noBackground />
+                <Button title="Send Another Code" onPress={this.goBack} disabled={submitting} noBackground small />
                 <Gap size={1} />
-                <Button title="Back to Login" onPress={this.gotoLogin} disabled={submitting} noBackground />
+                <Button title="Back to Login" onPress={this.gotoLogin} disabled={submitting} noBackground small />
             </View>
         )
     }

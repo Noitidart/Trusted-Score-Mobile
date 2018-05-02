@@ -24,7 +24,8 @@ type Props = {|
 
 class ScreenLandingDumb extends Component<Props> {
     static navigationOptions = {
-        header: null
+        header: null,
+        headerBackTitle: 'Logout'
     }
 
     constructor(props: Props) {
@@ -38,7 +39,7 @@ class ScreenLandingDumb extends Component<Props> {
         return (
             // <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
                 <View style={STYLES.screen}>
-                    <Text>{status}</Text>
+                    {/* <Text>{status}</Text> */}
                     { status && status !== SS.VERIFY && <LoginNavigator ref={this.refNavigator} /> }
                 </View>
             // </ScrollView>
