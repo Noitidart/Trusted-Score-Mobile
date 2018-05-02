@@ -42,7 +42,6 @@ const dimChan = channel(buffers.sliding(1));
 Dimensions.addEventListener('change', nativeEvent => dimChan.put({ nativeEvent }) );
 
 function* dimChanWorker({ nativeEvent }: DimensionsMessage): Generator<void, void, *> {
-    console.log('dimChanWorker, nativeEvent:', nativeEvent);
     const {window:{ width, height },screen:{ width:widthScreen, height:heightScreen }} = nativeEvent;
     yield put(patch({
         width,

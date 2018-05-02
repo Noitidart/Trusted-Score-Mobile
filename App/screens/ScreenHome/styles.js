@@ -6,10 +6,12 @@ import COLOR from '../../config/color'
 
 const styles = StyleSheet.create({
     empty: {
-        flex: 1,
-        // backgroundColor: COLOR.white,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexGrow: 1
+    },
+    list: {
+        flexGrow: 0
     },
     refreshButtonWrap: {
         marginTop: 16,

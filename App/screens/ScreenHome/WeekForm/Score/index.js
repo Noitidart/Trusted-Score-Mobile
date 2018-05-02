@@ -23,7 +23,6 @@ class Score extends Component<Props, State> {
     render() {
         const { value } = this.state;
         const { defaultValue } = this.props;
-        console.log('defaultValue:', defaultValue);
 
         return (
             <View style={styles.score}>

@@ -268,8 +268,6 @@ const fetchWeekUsers = (values: WeekFormValues): SubmitWeekFormAction => withPro
 
 function* fetchWeekUsersWorker({ resolve, reject }: SubmitWeekFormAction): Generator<*, *, *> {
 
-    yield call(delay, 10000);
-
     const { reply, status } = yield fetchApi('week/users');
 
     if (status === 200) {

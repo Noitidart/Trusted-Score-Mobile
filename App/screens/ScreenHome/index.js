@@ -61,7 +61,7 @@ class ScreenHomeDumb extends Component<Props, State> {
     })
 
     componentDidMount() {
-        this.fetchWeek();
+        // this.fetchWeek();
     }
 
     render() {
@@ -92,7 +92,7 @@ class ScreenHomeDumb extends Component<Props, State> {
         return (
             // <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
                 <View style={STYLES.screen}>
-                    <FlatList style={{ backgroundColor:'skyblue' }} ListHeaderComponent={WeekForm} data={data} renderItem={this.renderItem} keyExtractor={extractUserId} />
+                    <FlatList style={styles.list} ListHeaderComponent={WeekForm} data={data} renderItem={this.renderItem} keyExtractor={extractUserId} />
                     { emptyComponent }
                 </View>
             // </ScrollView>
