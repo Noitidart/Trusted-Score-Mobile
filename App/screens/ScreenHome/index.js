@@ -54,6 +54,8 @@ class ScreenHomeDumb extends Component<Props, State> {
         users: undefined
     }
 
+    lastIndex: number = -1
+
     didFocusListener = this.props.navigation.addListener('didFocus', () => {
         this.didFocusListener.remove();
         LoginNavigatorUtils.getNavigation().popToTop();
@@ -67,8 +69,6 @@ class ScreenHomeDumb extends Component<Props, State> {
     render() {
         const { sessionUserId } = this.props;
         const { isFetching, error, users } = this.state;
-
-        console.log('users:', users);
 
         const data = (users || []).filter(user => user.id !== sessionUserId);
 
@@ -89,6 +89,8 @@ class ScreenHomeDumb extends Component<Props, State> {
                 </View>
             )
         }
+
+        this.lastIndex = data.length - 1;
 
         return (
             // <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
@@ -129,7 +131,7 @@ class ScreenHomeDumb extends Component<Props, State> {
         this.setState(() => ({ isFetching:false, users }))
     }
 
-    renderItem = ({ item:user, index }) => <ScoreItem name={user.name} {...user.score} pressPayload={{ userId:user.id }} onPress={this.handleScoreItemPress} />
+    renderItem = ({ item:user, index }) => <ScoreItem name={user.name} {...user.score} pressPayload={{ userId:user.id }} onPress={this.handleScoreItemPress} dividerTop={index === 0} dividerBottom={index === this.lastIndex} />
 }
 
 const ScreenHomeConnected = connect(

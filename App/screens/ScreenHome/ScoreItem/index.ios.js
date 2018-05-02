@@ -18,6 +18,8 @@ import type { Score } from '../../../store/session'
 type Props = {|
     ...Score,
     name: string,
+    dividerTop?: boolean,
+    dividerBottom?: boolean,
     onPress: OnPress,
     pressPayload: {|
         userId: $PropertyType<Score, 'userId'>
@@ -31,10 +33,11 @@ type OnPress = (PressPayload, PressKind, value:? boolean) => void;
 
 class ScoreItem extends Component<Props> {
     render() {
-        const { name, value, updatedAt, comment } = this.props;
+        const { name, value, updatedAt, comment, dividerTop, dividerBottom } = this.props;
 
         return (
             <View style={styles.scoreItem}>
+                { dividerTop && <View style={styles.dividerTop} /> }
                 <View style={styles.primaryPosition}>
                     <Avatar name={name} size={40} fontSize={20} fontSizeOver={15} />
                 </View>
@@ -47,7 +50,9 @@ class ScoreItem extends Component<Props> {
                         {name}
                         { !!comment && <Text style={styles.desc}> - {comment}</Text> }
                     </Text>
+                    { !dividerBottom && <View style={styles.dividerInset} /> }
                 </View>
+                { dividerBottom && <View style={styles.dividerBottom} /> }
             </View>
         )
     }

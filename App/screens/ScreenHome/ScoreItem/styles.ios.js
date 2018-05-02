@@ -26,7 +26,9 @@ const styles = StyleSheet.create({
     },
     lines: {
         flex: 1,
-        marginRight: 16
+        marginRight: 16,
+        alignSelf: 'stretch',
+        justifyContent: 'center'
     },
     title: {
         fontSize: 16,
@@ -51,6 +53,27 @@ const styles = StyleSheet.create({
         fontSize: 14, // guess as "Three-line list" "Text only" section says secondary text is 14, and then looking in - https://storage.googleapis.com/material-design/publish/material_v_12/assets/0Bzhp5Z4wHba3dXNub0hnVG13blE/components-lists-keylines-three1.png - but it doesnt say if the text in this pic is subtitle or desc. but then looking in colros guide here - https://storage.googleapis.com/material-design/publish/material_v_12/assets/0BxFyKV4eeNjDdGdhMFBMUV9lVjA/style-typography-styles-11-body3.png - we see three lines here and the subtitle is definitely textColorSecondary // link92877777
         color: COLOR.textColorSecondary
     },
+    dividerTop: {
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: COLOR.grey,
+        position: 'absolute',
+        width: '100%',
+        top: 0
+    },
+    dividerBottom: {
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: COLOR.grey,
+        position: 'absolute',
+        width: '100%',
+        bottom: 0
+    },
+    dividerInset: {
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: COLOR.grey,
+        position: 'absolute',
+        width: '100%',
+        bottom: 0
+    }
 })
 
 export default styles
