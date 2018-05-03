@@ -23,3 +23,9 @@ export function testIfSameAs(name: string, nameAs?: string) {
         if (value !== valuen[name]) return `This does not match ${nameAs || name}`;
     }
 }
+
+export function testIfMinLength(length: number) {
+    return function(value: string): ErrorMessage {
+        if (value.length < length) return `This must be at least ${length} characters`;
+    }
+}

@@ -47,9 +47,9 @@ class ScreenLoginDumb extends Component<Props> {
         return (
             <View style={STYLES.form}>
                 <Gap size={4} />
-                <Field name="email" component={FieldText} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" placeholder="Email" returnKeyType="next" disableFullscreenUI />
+                <Field name="email" component={FieldText} autoCapitalize="none" autoCorrect={false} inputStyle={styles.input} keyboardType="email-address" placeholder="Email" returnKeyType="next" disableFullscreenUI />
                 <Gap size={2} />
-                <Field name="password" component={FieldText} autoCapitalize="none" placeholder="Password" returnKeyType="go" disableFullscreenUI secureTextEntry />
+                <Field name="password" component={FieldText} autoCapitalize="none" inputStyle={styles.input} placeholder="Password" returnKeyType="go" disableFullscreenUI secureTextEntry />
                 <Gap size={5} />
                 <Button title="Login" onPress={submit} disabled={submitFailed && invalid} loading={submitting} bold />
                 <Button title="Forgot Password" onPress={this.gotoForgot} disabled={submitting} noBackground small />

@@ -10,7 +10,7 @@ const COLOR = {
 
     grey: Platform.select({
         android: '#9E9E9E',
-        ios: '#C7C7CC' // color picked settings page
+        ios: '#8E8E93' // ivo
     }),
     red: Platform.select({
         android: '#E51C23',
