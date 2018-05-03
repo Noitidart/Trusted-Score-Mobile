@@ -7,6 +7,7 @@ import moment from 'moment'
 import COLOR from '../../../config/color'
 import { hashStringToColor } from '../../../utils/hash'
 import { getInitials } from '../../../utils/forum'
+import { formatAgoShort } from '../../../utils/moment'
 
 import Avatar from '../../../components/Avatar'
 import Icon from '../../../components/Icon'
@@ -45,7 +46,7 @@ class ScoreItem extends Component<Props> {
                     <View style={styles.lines}>
                         <View style={styles.titleRow}>
                             <Text style={styles.title} numberOfLines={1}>{value === null ? '?' : value}</Text>
-                            <Text style={styles.timestampNoColumn}>{updatedAt}</Text>
+                            <Text style={styles.timestampNoColumn}>{formatAgoShort(updatedAt)}</Text>
                         </View>
                         <Text style={styles.subtitle} numberOfLines={1}>
                             {name}

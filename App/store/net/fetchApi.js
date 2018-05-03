@@ -32,8 +32,8 @@ type FetchOut = {
 // should mutate init
 const PREPROCESS_BY_HOST: { [Host]:(input: string, init: FetchIn) => void } = {}
 
-// fetchApi.ORIGIN = 'http://localhost:8000/api';
-fetchApi.ORIGIN = 'https://trustedscore.mlink.info/public/api';
+fetchApi.ORIGIN = 'http://localhost:8000/api';
+// fetchApi.ORIGIN = 'https://trustedscore.mlink.info/public/api';
 function* fetchApi(input: string, init: FetchIn = {}): Generator<*, FetchOut, *> {
 
     const preprocess = PREPROCESS_BY_HOST[getHost(input)];
