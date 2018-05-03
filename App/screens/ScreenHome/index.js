@@ -9,7 +9,7 @@ import tinycolor from 'tinycolor2'
 import COLOR from '../../config/color';
 import AppNavigator, { AppNavigatorUtils } from '../../routes/AppNavigator'
 import { LoginNavigatorUtils } from '../../routes/LoginNavigator'
-import { fetchWeekUsers } from '../../store/session'
+import { fetchWeekUsers, screenDidFocus } from '../../store/session'
 
 import ScoreItem from './ScoreItem'
 import WeekForm from './WeekForm'
@@ -60,6 +60,8 @@ class ScreenHomeDumb extends Component<Props, State> {
         this.didFocusListener.remove();
         LoginNavigatorUtils.getNavigation().popToTop();
         delete this.didFocusListener;
+
+        this.props.dispatch(screenDidFocus('home'));
     })
 
     componentDidMount() {
@@ -70,6 +72,7 @@ class ScreenHomeDumb extends Component<Props, State> {
         const { sessionUserId } = this.props;
         const { isFetching, error, users } = this.state;
 
+        console.log('users:', users);
         const data = (users || []).filter(user => user.id !== sessionUserId);
 
         let emptyComponent;
@@ -135,7 +138,9 @@ class ScreenHomeDumb extends Component<Props, State> {
 }
 
 const ScreenHomeConnected = connect(
-    function({session:{user:{ id }}}: AppShape) {
+    function(state: AppShape) {
+        const {session:{user:{ id }}} = state;
+        console.log('ScreenHomeConnected :: session:', state.session);
         return {
             sessionUserId: id
         }

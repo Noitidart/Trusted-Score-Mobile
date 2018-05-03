@@ -36,6 +36,8 @@ type Props = {|
     ...FormProps
 |}
 
+const FORM = 'login';
+
 class ScreenLoginDumb extends Component<Props> {
     static navigationOptions = {
         header: null
@@ -66,15 +68,11 @@ class ScreenLoginDumb extends Component<Props> {
 }
 
 const ScreenLoginFormed = withBaseForm({
-    form: 'login',
+    form: FORM,
     onSubmit: async function(values, dispatch, { blurFields, focusField, reset }) {
         blurFields();
 
         await dispatch(login(values)).promise
-
-        AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
-
-        setTimeout(reset, 1000);
     }
 }, {
     validateRules: {
@@ -95,4 +93,5 @@ const ScreenLoginConnected = connect(
 
 const ScreenLogin = ScreenLoginConnected(ScreenLoginFormed(ScreenLoginDumb))
 
+export { FORM }
 export default ScreenLogin

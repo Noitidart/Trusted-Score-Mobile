@@ -4,6 +4,7 @@ import { delay } from 'redux-saga'
 import { call, fork, put, race, select, take, takeEvery } from 'redux-saga/effects'
 import { createTransform } from 'redux-persist'
 import { SET_SUBMIT_SUCCEEDED } from 'redux-form/es/actionTypes'
+import actions from 'redux-form/es/actions'
 import { omit, assignWith } from 'lodash'
 import { pickAsByString } from 'cmn/src/all'
 
@@ -11,6 +12,7 @@ import { getSubmissionErrorFromLaravelReply, withPromise, waitRehydrate } from '
 import fetchApi from '../net/fetchApi'
 import { AppNavigatorUtils } from '../../routes/AppNavigator'
 import { FORM as WEEK_FORM_NAME } from '../../screens/ScreenHome/WeekForm'
+import { FORM as LOGIN_FORM_NAME } from '../../screens/ScreenLogin'
 
 export type Shape = {|
     status?: SessionStatus, // never persisted
@@ -127,6 +129,11 @@ type CheckCodeAction = { type:typeof CHECK_CODE, values:CheckCodeValues, promise
 const checkCode = (values: CheckCodeValues): CheckCodeAction => withPromise({ type:CHECK_CODE, values });
 
 //
+const SCREEN_DID_FOCUS = A`SCREEN_DID_FOCUS`;
+type ScreenDidFocusAction = { type:typeof SCREEN_DID_FOCUS, routeName:string }
+const screenDidFocus = (routeName: string): ScreenDidFocusAction => ({ type:SCREEN_DID_FOCUS, routeName });
+
+//
 function* sessionSaga(): Generator<*, *, *> {
 
     yield waitRehydrate();
@@ -158,9 +165,6 @@ function* sessionSaga(): Generator<*, *, *> {
 
         const { type, resolve, reject, values:body } = loginAction || registerAction || verifyAction;
 
-        console.log('type:', type);
-        if (type === LOGIN) yield put(patch({ email:body.email }));
-
         const { status, reply } = (registerAction && (yield call(fetchApi, 'register' , { method:'POST', body }))) ||
                                   (loginAction    && (yield call(fetchApi, 'login'    , { method:'POST', body }))) ||
                                   (verifyAction   && (yield call(fetchApi, 'user'     , { method:'GET'        })));
@@ -175,8 +179,17 @@ function* sessionSaga(): Generator<*, *, *> {
                 user: getUser(userRaw)
             }));
 
-            if (type === VERIFY) AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
-            resolve();
+            // yield select()).session; // TODO: i might need to do a yield select() as yield put does not block - and ScreenHome requires user
+            AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
+            yield take(action => action.type === SCREEN_DID_FOCUS && action.routeName === 'home');
+            console.log('ScreenHome did focus!!');
+
+            resolve(); // stop spinning the login/register form // resolve for verify too, but i dont watch this promise in ui - but when i have splash i think i might
+
+            if ([LOGIN, REGISTER].includes(type)) {
+                yield take(action => action.type === SET_SUBMIT_SUCCEEDED && ['register', 'login'].includes(action.meta.form));
+                yield put(actions.initialize(LOGIN_FORM_NAME, { email })); // so login email field is populated with this email
+            }
 
             yield take(LOGOUT);
 
@@ -297,17 +310,18 @@ export default function reducer(state: Shape = INITIAL, action:Action): Shape {
         case PATCH: {
 
             let userNext;
+            const user = state.user;
             if (action.data.hasOwnProperty('user')) {
                 if (action.data.user) {
-                    const user = state.user;
                     userNext = {
                         ...(user || {}),
                         ...action.data.user
                     }
 
+                    const score = ((state.user || {}).score);
+                    let scoreNext;
                     if (action.data.user.hasOwnProperty('score')) {
                         if (action.data.user.score) {
-                            const score = ((state.user || {}).score);
                             scoreNext = {
                                 ...(score || {}),
                                 ...action.data.user.score
@@ -316,10 +330,14 @@ export default function reducer(state: Shape = INITIAL, action:Action): Shape {
                             scoreNext = action.data.user.score;
                         }
                         userNext.score = scoreNext;
+                    } else {
+                        userNext.score = score;
                     }
                 } else {
                     userNext = action.data.user;
                 }
+            } else {
+                userNext = user;
             }
 
             return {
@@ -376,4 +394,4 @@ function getUser(userRaw:{}): User {
 }
 
 export type { SessionStatus, Score, User, UserId, ScoreId }
-export { SS, login, logout, register, forgot as forgotPassword, reset as resetPassword, checkCode, submitWeekForm, fetchWeekUsers }
+export { SS, login, logout, register, forgot as forgotPassword, reset as resetPassword, checkCode, submitWeekForm, fetchWeekUsers, screenDidFocus }

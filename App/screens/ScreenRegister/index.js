@@ -68,8 +68,6 @@ const ScreenRegisterFormed = withBaseForm({
         blurFields();
 
         await dispatch(register(values)).promise;
-
-        AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
     }
 }, {
     validateRules: {
