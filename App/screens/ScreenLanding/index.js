@@ -5,7 +5,7 @@ import { View, Text } from 'react-native'
 import { connect } from 'react-redux'
 
 import LoginNavigator, { LoginNavigatorUtils } from '../../routes/LoginNavigator'
-import { SS } from '../../store/session'
+import { SS, logout } from '../../store/session'
 
 import styles from  './styles'
 import STYLES from '../../config/styles'
@@ -13,7 +13,11 @@ import STYLES from '../../config/styles'
 import type { Shape as AppShape } from '../../store'
 import type { SessionStatus } from '../../store/session'
 
-type OwnProps = {||}
+type OwnProps = {|
+    navigation: {|
+        addListener: () => void
+    |}
+|}
 
 type Props = {|
     ...OwnProps,
@@ -33,6 +37,8 @@ class ScreenLandingDumb extends Component<Props> {
 
         LoginNavigatorUtils.getNavigation = this.getNavigation;
     }
+
+    logoutListener = this.props.navigation.addListener('didFocus', () => this.props.dispatch(logout()))
 
     render() {
         const { status } = this.props;

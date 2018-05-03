@@ -153,7 +153,7 @@ function* sessionSaga(): Generator<*, *, *> {
         const [ loginAction, registerAction, verifyAction ] = yield race([
             take(LOGIN),
             take(REGISTER),
-            take(VERIFY)
+            take(VERIFY) // TODO: dont listen to this after first time
         ]);
 
         const { type, resolve, reject, values:body } = loginAction || registerAction || verifyAction;
@@ -177,6 +177,10 @@ function* sessionSaga(): Generator<*, *, *> {
 
             if (type === VERIFY) AppNavigatorUtils.getNavigation().navigate({ routeName:'home', key:'home' });
             resolve();
+
+            yield take(LOGOUT);
+
+            yield put(patch({ status:SS.OUT, token:undefined, user:undefined }));
         } else {
             if (type === VERIFY) {
                 // really only if status === 401, but for now just if any error, mark it as out
