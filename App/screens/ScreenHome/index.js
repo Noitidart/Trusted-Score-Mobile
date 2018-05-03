@@ -95,7 +95,7 @@ class ScreenHomeDumb extends Component<Props, State> {
         return (
             // <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
                 <View style={STYLES.screen}>
-                    <FlatList style={styles.list} ListHeaderComponent={WeekForm} data={data} renderItem={this.renderItem} keyExtractor={extractUserId} />
+                    <FlatList style={styles.list} ListFooterComponent={Platform.OS === 'ios' && <Gap size={5} />} ListHeaderComponent={WeekForm} data={data} renderItem={this.renderItem} keyExtractor={extractUserId} />
                     { emptyComponent }
                 </View>
             // </ScrollView>

@@ -371,5 +371,5 @@ function getUser(userRaw:{}): User {
     });
 }
 
-export type { SessionStatus, Score, UserId, ScoreId }
+export type { SessionStatus, Score, User, UserId, ScoreId }
 export { SS, login, logout, register, forgot as forgotPassword, reset as resetPassword, checkCode, submitWeekForm, fetchWeekUsers }
