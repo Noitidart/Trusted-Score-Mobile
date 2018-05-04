@@ -25,14 +25,15 @@ class Avatar extends Component<Props> {
 
         const initials = getInitials(name);
         const { hex:backgroundColor, light } = findClosestMaterialColor(hashToColor(name), {
-            excludeGroups: ['grey']
+            excludeGroups: ['grey'],
+            onlyShades: ['600']
         });
 
         const avatarStyle = {
             width: size,
             height: size,
             borderRadius: size / 2,
-            backgroundColor // TODO: if image supplied, then i dont care about color
+            ...(initials ? { backgroundColor } : {})
         }
 
         const textStyle = {

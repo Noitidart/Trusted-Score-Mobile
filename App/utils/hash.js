@@ -14,7 +14,7 @@ function djb2(str: string): number {
 type HexColor = string; // with leading #
 export function hashToColor(str: string): HexColor {
     // https://stackoverflow.com/a/20109176/1828637
-    return '#' + MD5(str).substr(0, 6);
+    return '#' + MD5(str).toString().substr(0, 6);
 
     // // https://stackoverflow.com/a/16533568/1828637
     // const hash = djb2(str);

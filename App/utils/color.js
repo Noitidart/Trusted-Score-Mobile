@@ -1553,12 +1553,14 @@ type MaterialColor = {|
 
 type FilterMaterialColorsOptions = {|
     excludeGroups?: $PropertyType<MaterialColor, 'group'>[],
-    onlyShades?: $PropertyType<MaterialColor, 'shade'>[]
+    onlyShades?: $PropertyType<MaterialColor, 'shade'>[],
+    onlyLight?: boolean
 |}
-export function filterMaterialColors({ excludeGroups, onlyShades }: FilterMaterialColorsOptions = {}): MaterialColor[] {
+export function filterMaterialColors({ excludeGroups, onlyShades, onlyLight }: FilterMaterialColorsOptions = {}): MaterialColor[] {
     return Object.values(MATERIAL_COLORS).filter((materialColor: MaterialColor) => {
         if (excludeGroups && excludeGroups.includes(materialColor.group)) return false;
         if (onlyShades && !onlyShades.includes(materialColor.shade)) return false;
+        if (onlyLight && !materialColor.light) return false;
         return true;
     });
 }
@@ -1581,5 +1583,6 @@ export function findClosestMaterialColor(color: Color, options?: FilterMaterialC
 
     rankedMaterialColors.sort(byRankAsc);
 
+    console.log('color:', color, 'closestMaterialColor:', rankedMaterialColors[0].materialColor);
     return rankedMaterialColors[0].materialColor;
 }
