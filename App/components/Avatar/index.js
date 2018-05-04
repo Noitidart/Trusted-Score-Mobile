@@ -24,7 +24,7 @@ class Avatar extends Component<Props> {
         const { name='', size, fontSize, fontSizeOver } = this.props;
 
         const initials = getInitials(name);
-        const { hex:backgroundColor, light } = findClosestMaterialColor(hashToColor(name), {
+        const { hex:backgroundColor, light } = findClosestMaterialColor(hashToColor(name.trim()), {
             excludeGroups: ['grey'],
             onlyShades: ['600']
         });
