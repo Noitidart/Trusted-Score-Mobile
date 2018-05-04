@@ -1583,6 +1583,5 @@ export function findClosestMaterialColor(color: Color, options?: FilterMaterialC
 
     rankedMaterialColors.sort(byRankAsc);
 
-    console.log('color:', color, 'closestMaterialColor:', rankedMaterialColors[0].materialColor);
     return rankedMaterialColors[0].materialColor;
 }
