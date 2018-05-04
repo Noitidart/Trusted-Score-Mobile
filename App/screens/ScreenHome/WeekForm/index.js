@@ -11,8 +11,6 @@ import { debounce, isEqual } from 'lodash'
 import COLOR from '../../../config/color';
 import AppNavigator, { AppNavigatorUtils } from '../../../routes/AppNavigator'
 import { LoginNavigatorUtils } from '../../../routes/LoginNavigator'
-import { hashStringToColor } from '../../../utils/hash'
-import { getInitials } from '../../../utils/forum'
 import { formatFixedWithoutZeroes, formatBlankAsUndefined } from '../../../utils/form'
 import { submitWeekForm } from '../../../store/session'
 

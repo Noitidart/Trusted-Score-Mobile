@@ -4,9 +4,6 @@ import React, { Component } from 'react'
 import { Text, TouchableNativeFeedback, View } from 'react-native'
 import moment from 'moment'
 
-import COLOR from '../../../config/color'
-import { hashStringToColor } from '../../../utils/hash'
-import { getInitials } from '../../../utils/forum'
 import { formatAgoShort } from '../../../utils/moment'
 
 import Avatar from '../../../components/Avatar'

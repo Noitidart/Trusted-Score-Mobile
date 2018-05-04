@@ -5,8 +5,9 @@ import { Image, Text, View } from 'react-native'
 import tinycolor from 'tinycolor2'
 
 import COLOR from '../../config/color';
-import { hashStringToColor } from '../../utils/hash'
+import { hashToColor } from '../../utils/hash'
 import { getInitials } from '../../utils/forum'
+import { findClosestMaterialColor } from '../../utils/color'
 
 import styles from  './styles'
 
@@ -23,19 +24,20 @@ class Avatar extends Component<Props> {
         const { name='', size, fontSize, fontSizeOver } = this.props;
 
         const initials = getInitials(name);
-        const nameColor = hashStringToColor(name);
-        const initialsColor = tinycolor.readability(COLOR.white, nameColor) >= 1.3 ? COLOR.white : COLOR.black;
+        const { hex:backgroundColor, light } = findClosestMaterialColor(hashToColor(name), {
+            excludeGroups: ['grey']
+        });
 
         const avatarStyle = {
             width: size,
             height: size,
             borderRadius: size / 2,
-            ...(initials ? { backgroundColor:nameColor } : {})
+            backgroundColor // TODO: if image supplied, then i dont care about color
         }
 
         const textStyle = {
             fontSize: initials.length <= 2 ? fontSize : fontSizeOver,
-            color: initialsColor
+            color: light ? COLOR.white : COLOR.black
         }
         return (
             <View style={[styles.avatar, avatarStyle]}>
